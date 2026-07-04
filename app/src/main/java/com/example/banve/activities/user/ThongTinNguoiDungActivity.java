@@ -60,6 +60,7 @@ public class ThongTinNguoiDungActivity extends AppCompatActivity {
         btnCapNhat = findViewById(R.id.btnCapNhat);
         btnDoiMatKhau = findViewById(R.id.btnDoiMatKhau);
         btnDangXuat = findViewById(R.id.btnDangXuat);
+        findViewById(R.id.btnQuayLai).setOnClickListener(v -> finish());
     }
 
     private void batSuKien() {

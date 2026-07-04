@@ -87,6 +87,7 @@ public class ThanhToanActivity extends AppCompatActivity {
         btnChonVoucher = findViewById(R.id.btnChonVoucher);
         btnXacNhanThanhToan = findViewById(R.id.btnXacNhanThanhToan);
         btnHuy = findViewById(R.id.btnHuy);
+        findViewById(R.id.btnQuayLai).setOnClickListener(v -> finish());
     }
 
     private void khoiTaoRecyclerView() {

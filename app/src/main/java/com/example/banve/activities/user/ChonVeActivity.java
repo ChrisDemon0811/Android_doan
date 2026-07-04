@@ -65,6 +65,7 @@ public class ChonVeActivity extends AppCompatActivity {
         lblSoLuongCT = findViewById(R.id.lblSoLuongCT);
         lblTongTamTinh = findViewById(R.id.lblTongTamTinh);
         btnThemVaoGio = findViewById(R.id.btnThemVaoGio);
+        findViewById(R.id.btnQuayLai).setOnClickListener(v -> finish());
     }
 
     private void cauHinhNgaySuDung() {

@@ -12,16 +12,36 @@
         android:padding="@dimen/screen_padding">
 
         <!-- ═══ Header ═══ -->
-        <TextView
-            android:id="@+id/lblTieuDe"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_hero_user"
             android:elevation="@dimen/elevation_lg"
             android:gravity="center_vertical"
-            android:padding="@dimen/space_xxl"
-            android:text="🧾 Chi tiết hóa đơn"
-            style="@style/App.Text.OnGradient.DisplaySm" />
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/space_md"
+            android:paddingTop="@dimen/space_lg"
+            android:paddingEnd="@dimen/space_xxl"
+            android:paddingBottom="@dimen/space_lg">
+
+            <ImageView
+                android:id="@+id/btnQuayLai"
+                android:layout_width="@dimen/icon_xl"
+                android:layout_height="@dimen/icon_xl"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Quay lại"
+                android:padding="@dimen/space_sm"
+                android:src="@drawable/ic_quay_lai" />
+
+            <TextView
+                android:id="@+id/lblTieuDe"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_weight="1"
+                android:text="🧾 Chi tiết hóa đơn"
+                style="@style/App.Text.OnGradient.Heading" />
+        </LinearLayout>
 
         <!-- ═══ Thông tin hóa đơn ═══ -->
         <LinearLayout

@@ -15,28 +15,46 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_hero_user"
-            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingStart="@dimen/space_xxl"
-            android:paddingTop="@dimen/space_xxxl"
+            android:paddingStart="@dimen/space_md"
+            android:paddingTop="@dimen/space_xl"
             android:paddingEnd="@dimen/space_xxl"
             android:paddingBottom="@dimen/space_xxxl">
 
+            <!-- Nút quay lại -->
             <ImageView
-                android:layout_width="@dimen/avatar_size_lg"
-                android:layout_height="@dimen/avatar_size_lg"
-                android:background="@drawable/bg_logo_tron"
-                android:contentDescription="Avatar"
-                android:padding="@dimen/space_lg"
-                android:src="@drawable/img_vaa_e1744105217584" />
+                android:id="@+id/btnQuayLai"
+                android:layout_width="@dimen/icon_xl"
+                android:layout_height="@dimen/icon_xl"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Quay lại"
+                android:padding="@dimen/space_sm"
+                android:src="@drawable/ic_quay_lai" />
 
-            <TextView
-                android:id="@+id/lblTieuDe"
-                android:layout_width="wrap_content"
+            <!-- Avatar + tên -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:text="Hồ sơ cá nhân"
-                style="@style/App.Text.OnGradient.DisplaySm" />
+                android:gravity="center_horizontal"
+                android:layout_marginTop="@dimen/space_sm"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/avatar_size_lg"
+                    android:layout_height="@dimen/avatar_size_lg"
+                    android:background="@drawable/bg_logo_tron"
+                    android:contentDescription="Avatar"
+                    android:padding="@dimen/space_lg"
+                    android:src="@drawable/img_vaa_e1744105217584" />
+
+                <TextView
+                    android:id="@+id/lblTieuDe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="Hồ sơ cá nhân"
+                    style="@style/App.Text.OnGradient.DisplaySm" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- ═══ Thông tin ═══ -->

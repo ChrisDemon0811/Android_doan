@@ -40,6 +40,7 @@ public class LichSuDonHangActivity extends AppCompatActivity {
     private void anhXa() {
         rcvLichSuDonHang = findViewById(R.id.rcvLichSuDonHang);
         lblTrong = findViewById(R.id.lblTrong);
+        findViewById(R.id.btnQuayLai).setOnClickListener(v -> finish());
     }
 
     private void khoiTaoRecyclerView() {

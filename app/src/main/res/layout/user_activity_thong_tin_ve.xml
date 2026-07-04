@@ -27,6 +27,19 @@
                 android:layout_height="80dp"
                 android:layout_gravity="bottom"
                 android:background="@drawable/bg_overlay_bottom" />
+
+            <!-- Nút quay lại trên ảnh -->
+            <ImageView
+                android:id="@+id/btnQuayLai"
+                android:layout_width="@dimen/icon_xl"
+                android:layout_height="@dimen/icon_xl"
+                android:layout_gravity="start|top"
+                android:layout_marginStart="@dimen/space_md"
+                android:layout_marginTop="@dimen/space_lg"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Quay lại"
+                android:padding="@dimen/space_sm"
+                android:src="@drawable/ic_quay_lai" />
         </FrameLayout>
 
         <!-- ═══ Thông tin vé ═══ -->

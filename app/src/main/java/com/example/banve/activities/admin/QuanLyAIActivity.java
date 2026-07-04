@@ -56,6 +56,7 @@ public class QuanLyAIActivity extends AppCompatActivity {
         btnLuu = findViewById(R.id.btnLuu);
         btnKiemTra = findViewById(R.id.btnKiemTra);
         pgbDangTai = findViewById(R.id.pgbDangTai);
+        findViewById(R.id.btnQuayLai).setOnClickListener(v -> finish());
     }
 
     private void ganGiaTriMacDinh() {

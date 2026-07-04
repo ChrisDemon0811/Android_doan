@@ -1,6 +1,8 @@
 package com.example.banve.fragments.admin;
 
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,9 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.banve.R;
 import com.example.banve.adapters.VeQuanLyAdapter;
 import com.example.banve.controllers.VeController;
@@ -28,12 +33,15 @@ import com.example.banve.dao.LoaiVeDAO;
 import com.example.banve.models.LoaiVe;
 import com.example.banve.models.Ve;
 import com.example.banve.network.ApiCallback;
+import com.example.banve.network.SupabaseStorageClient;
 import com.example.banve.utils.TienIch;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class QuanLyVeFragment extends Fragment {
+    private static final int MA_CHON_ANH_VE = 4101;
+
     private EditText edtTimKiem;
     private Spinner spnLocLoaiVe;
     private LinearLayout layBoLoc;
@@ -45,6 +53,9 @@ public class QuanLyVeFragment extends Fragment {
     private LoaiVeDAO loaiVeDAO;
     private final List<LoaiVe> danhSachLoaiVe = new ArrayList<>();
     private ArrayAdapter<String> locLoaiVeAdapter;
+    private Uri anhVeUriDangChon;
+    private ImageView imgAnhVeXemTruocDangMo;
+    private TextView lblAnhVeDaChonDangMo;
 
     @Nullable
     @Override
@@ -207,17 +218,24 @@ public class QuanLyVeFragment extends Fragment {
         EditText edtSoLuong = view.findViewById(R.id.edtSoLuong);
         EditText edtMoTa = view.findViewById(R.id.edtMoTa);
         EditText edtThongTinVe = view.findViewById(R.id.edtThongTinVe);
-        EditText edtAnhVeUrl = view.findViewById(R.id.edtAnhVeUrl);
+        TextView lblAnhVeDaChon = view.findViewById(R.id.lblAnhVeDaChon);
+        ImageView imgAnhVeXemTruoc = view.findViewById(R.id.imgAnhVeXemTruoc);
+        Button btnChonAnhVe = view.findViewById(R.id.btnChonAnhVe);
         Switch swtTrangThai = view.findViewById(R.id.swtTrangThai);
         Button btnLuu = view.findViewById(R.id.btnLuu);
         Button btnHuy = view.findViewById(R.id.btnHuy);
 
+        anhVeUriDangChon = null;
+        imgAnhVeXemTruocDangMo = imgAnhVeXemTruoc;
+        lblAnhVeDaChonDangMo = lblAnhVeDaChon;
+
         ArrayAdapter<String> loaiVeAdapter = taoAdapterLoaiVe();
         spnLoaiVe.setAdapter(loaiVeAdapter);
         if (veCanSua != null) {
-            doDuLieuLenDialog(veCanSua, edtTenVe, spnLoaiVe, edtGiaVe, edtGiaNguoiLon, edtGiaTreEm, edtGiaCaoTuoi, edtSoLuong, edtMoTa, edtThongTinVe, edtAnhVeUrl, swtTrangThai);
+            doDuLieuLenDialog(veCanSua, edtTenVe, spnLoaiVe, edtGiaVe, edtGiaNguoiLon, edtGiaTreEm, edtGiaCaoTuoi, edtSoLuong, edtMoTa, edtThongTinVe, lblAnhVeDaChon, imgAnhVeXemTruoc, swtTrangThai);
         }
 
+        btnChonAnhVe.setOnClickListener(v -> moManHinhChonAnh());
         btnLuu.setOnClickListener(v -> luuVeTuDialog(
                 dialog,
                 veCanSua,
@@ -230,10 +248,15 @@ public class QuanLyVeFragment extends Fragment {
                 edtSoLuong,
                 edtMoTa,
                 edtThongTinVe,
-                edtAnhVeUrl,
-                swtTrangThai
+                swtTrangThai,
+                btnLuu
         ));
         btnHuy.setOnClickListener(v -> dialog.dismiss());
+        dialog.setOnDismissListener(d -> {
+            anhVeUriDangChon = null;
+            imgAnhVeXemTruocDangMo = null;
+            lblAnhVeDaChonDangMo = null;
+        });
         dialog.show();
     }
 
@@ -258,7 +281,8 @@ public class QuanLyVeFragment extends Fragment {
             EditText edtSoLuong,
             EditText edtMoTa,
             EditText edtThongTinVe,
-            EditText edtAnhVeUrl,
+            TextView lblAnhVeDaChon,
+            ImageView imgAnhVeXemTruoc,
             Switch swtTrangThai
     ) {
         edtTenVe.setText(ve.getTenVe());
@@ -270,7 +294,17 @@ public class QuanLyVeFragment extends Fragment {
         edtSoLuong.setText(String.valueOf(ve.getSoLuong()));
         edtMoTa.setText(ve.getMoTa());
         edtThongTinVe.setText(ve.getThongTinVe());
-        edtAnhVeUrl.setText(ve.getAnhVe());
+        if (coNoiDung(ve.getAnhVe())) {
+            lblAnhVeDaChon.setText("Đang dùng ảnh đã lưu trên Supabase Storage");
+            Glide.with(this)
+                    .load(ve.getAnhVe())
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .into(imgAnhVeXemTruoc);
+        } else {
+            lblAnhVeDaChon.setText("Chưa chọn ảnh vé");
+            imgAnhVeXemTruoc.setImageResource(R.mipmap.ic_launcher);
+        }
         swtTrangThai.setChecked("HoatDong".equals(ve.getTrangThai()));
     }
 
@@ -295,8 +329,8 @@ public class QuanLyVeFragment extends Fragment {
             EditText edtSoLuong,
             EditText edtMoTa,
             EditText edtThongTinVe,
-            EditText edtAnhVeUrl,
-            Switch swtTrangThai
+            Switch swtTrangThai,
+            Button btnLuu
     ) {
         try {
             Ve ve = veCanSua == null ? new Ve() : veCanSua;
@@ -313,16 +347,39 @@ public class QuanLyVeFragment extends Fragment {
             ve.setSoLuong(docInt(edtSoLuong));
             ve.setMoTa(layChuoi(edtMoTa));
             ve.setThongTinVe(layChuoi(edtThongTinVe));
-            ve.setAnhVe(layChuoi(edtAnhVeUrl));
+            ve.setAnhVe(veCanSua == null ? "" : veCanSua.getAnhVe());
             ve.setTrangThai(swtTrangThai.isChecked() ? "HoatDong" : "Khoa");
 
-            if (veCanSua == null) {
-                themVe(dialog, ve);
+            if (anhVeUriDangChon != null) {
+                btnLuu.setEnabled(false);
+                btnLuu.setText("Đang tải ảnh...");
+                SupabaseStorageClient.taiAnhVe(requireContext(), anhVeUriDangChon, new ApiCallback<String>() {
+                    @Override
+                    public void onSuccess(String data) {
+                        ve.setAnhVe(data);
+                        luuVeSauKhiCoAnh(dialog, veCanSua, ve);
+                    }
+
+                    @Override
+                    public void onError(String thongBao) {
+                        btnLuu.setEnabled(true);
+                        btnLuu.setText("💾 Lưu");
+                        baoLoi("Lỗi tải ảnh", thongBao);
+                    }
+                });
             } else {
-                suaVe(dialog, ve);
+                luuVeSauKhiCoAnh(dialog, veCanSua, ve);
             }
         } catch (NumberFormatException e) {
             TienIch.hienToast(requireContext(), "Vui lòng nhập đúng định dạng số");
+        }
+    }
+
+    private void luuVeSauKhiCoAnh(AlertDialog dialog, Ve veCanSua, Ve ve) {
+        if (veCanSua == null) {
+            themVe(dialog, ve);
+        } else {
+            suaVe(dialog, ve);
         }
     }
 
@@ -390,6 +447,36 @@ public class QuanLyVeFragment extends Fragment {
     private int docInt(EditText editText) {
         String chuoi = layChuoi(editText).trim();
         return chuoi.isEmpty() ? 0 : Integer.parseInt(chuoi);
+    }
+
+    private void moManHinhChonAnh() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Chọn ảnh vé"), MA_CHON_ANH_VE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != MA_CHON_ANH_VE || resultCode != android.app.Activity.RESULT_OK || data == null || data.getData() == null) {
+            return;
+        }
+
+        anhVeUriDangChon = data.getData();
+        if (lblAnhVeDaChonDangMo != null) {
+            lblAnhVeDaChonDangMo.setText("Đã chọn ảnh mới, ảnh sẽ được tải lên khi lưu");
+        }
+        if (imgAnhVeXemTruocDangMo != null) {
+            Glide.with(this)
+                    .load(anhVeUriDangChon)
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .into(imgAnhVeXemTruocDangMo);
+        }
+    }
+
+    private boolean coNoiDung(String chuoi) {
+        return chuoi != null && !chuoi.trim().isEmpty();
     }
 
     private void baoLoi(String tieuDe, String thongBao) {

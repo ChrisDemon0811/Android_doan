@@ -58,6 +58,7 @@ public class ChiTietHoaDonActivity extends AppCompatActivity {
         lblHinhThuc = findViewById(R.id.lblHinhThuc);
         rcvChiTietHoaDon = findViewById(R.id.rcvChiTietHoaDon);
         btnDong = findViewById(R.id.btnDong);
+        findViewById(R.id.btnQuayLai).setOnClickListener(v -> finish());
     }
 
     private void khoiTaoRecyclerView() {

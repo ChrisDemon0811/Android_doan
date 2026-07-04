@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,15 +12,38 @@
         android:padding="@dimen/screen_padding">
 
         <!-- ═══ Hero tên vé ═══ -->
-        <TextView
-            android:id="@+id/lblTenVe"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_hero_user"
             android:elevation="@dimen/elevation_lg"
-            android:padding="@dimen/space_xxl"
-            android:text="Tên vé"
-            style="@style/App.Text.OnGradient.DisplaySm" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/space_md"
+            android:paddingTop="@dimen/space_lg"
+            android:paddingEnd="@dimen/space_xxl"
+            android:paddingBottom="@dimen/space_lg">
+
+            <ImageView
+                android:id="@+id/btnQuayLai"
+                android:layout_width="@dimen/icon_xl"
+                android:layout_height="@dimen/icon_xl"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Quay lại"
+                android:padding="@dimen/space_sm"
+                android:src="@drawable/ic_quay_lai" />
+
+            <TextView
+                android:id="@+id/lblTenVe"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_weight="1"
+                android:text="Tên vé"
+                android:maxLines="2"
+                android:ellipsize="end"
+                style="@style/App.Text.OnGradient.Heading" />
+        </LinearLayout>
 
         <!-- ═══ Chọn ngày ═══ -->
         <TextView

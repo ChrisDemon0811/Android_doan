@@ -1,36 +1,24 @@
 package com.example.banve.controllers;
 
-import android.os.Handler;
-import android.os.Looper;
-
-import com.example.banve.dao.CauHinhAIDAO;
 import com.example.banve.dao.LichSuChatDAO;
-import com.example.banve.models.CauHinhAI;
 import com.example.banve.models.LichSuChat;
 import com.example.banve.network.ApiCallback;
 import com.example.banve.utils.Session;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChatAIController {
-    private final CauHinhAIDAO cauHinhAIDAO;
+    private static final int SO_LICH_SU_GUI_AI = 6;
+
+    private final AIContextController aiContextController;
+    private final AIServiceController aiServiceController;
     private final LichSuChatDAO lichSuChatDAO;
-    private final Handler mainHandler;
 
     public ChatAIController() {
-        cauHinhAIDAO = new CauHinhAIDAO();
+        aiContextController = new AIContextController();
+        aiServiceController = new AIServiceController();
         lichSuChatDAO = new LichSuChatDAO();
-        mainHandler = new Handler(Looper.getMainLooper());
     }
 
     public void guiCauHoi(String cauHoi, ApiCallback<String> callback) {
@@ -39,15 +27,16 @@ public class ChatAIController {
             return;
         }
 
-        if (!Session.dangDangNhap()) {
+        if (!Session.dangDangNhap() || Session.nguoiDungHienTai == null) {
             callback.onError("Phiên đăng nhập không hợp lệ, vui lòng đăng nhập lại");
             return;
         }
 
-        cauHinhAIDAO.layCauHinhHienTai(new ApiCallback<CauHinhAI>() {
+        String cauHoiChuan = cauHoi.trim();
+        aiContextController.taoContextChat(new ApiCallback<String>() {
             @Override
-            public void onSuccess(CauHinhAI cauHinhAI) {
-                goiApiAI(cauHinhAI, cauHoi.trim(), callback);
+            public void onSuccess(String contextDuLieu) {
+                taiLichSuGanDay(cauHoiChuan, contextDuLieu, callback);
             }
 
             @Override
@@ -57,172 +46,75 @@ public class ChatAIController {
         });
     }
 
-    private void goiApiAI(CauHinhAI cauHinhAI, String cauHoi, ApiCallback<String> callback) {
-        String loi = kiemTraCauHinh(cauHinhAI);
-        if (loi != null) {
-            callback.onError(loi);
-            return;
-        }
-
-        new Thread(() -> {
-            try {
-                String traLoi = guiYeuCauHttp(cauHinhAI, cauHoi);
-                mainHandler.post(() -> luuLichSu(cauHoi, traLoi, callback));
-            } catch (Exception e) {
-                mainHandler.post(() -> callback.onError("Lỗi gọi AI: " + e.getMessage()));
-            }
-        }).start();
-    }
-
-    private String kiemTraCauHinh(CauHinhAI cauHinhAI) {
-        if (cauHinhAI == null) {
-            return "Chưa có cấu hình AI";
-        }
-        if (rong(cauHinhAI.getNhaCungCap())) {
-            return "Chưa cấu hình nhà cung cấp AI";
-        }
-        if (rong(cauHinhAI.getKhoaApi())) {
-            return "Chưa cấu hình khóa API AI";
-        }
-        if (rong(cauHinhAI.getMoHinh())) {
-            return "Chưa cấu hình mô hình AI";
-        }
-        if (!laCauHinhGemini(cauHinhAI.getNhaCungCap())) {
-            return "Chỉ hỗ trợ Gemini, vui lòng kiểm tra lại cấu hình AI";
-        }
-        return null;
-    }
-
-    private String guiYeuCauHttp(CauHinhAI cauHinhAI, String cauHoi) throws Exception {
-        HttpURLConnection connection = (HttpURLConnection) new URL(taoUrlGemini(cauHinhAI)).openConnection();
-        connection.setRequestMethod("POST");
-        connection.setConnectTimeout(30000);
-        connection.setReadTimeout(60000);
-        connection.setDoOutput(true);
-        connection.setRequestProperty("x-goog-api-key", cauHinhAI.getKhoaApi());
-        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-
-        byte[] body = taoBody(cauHinhAI, cauHoi).toString().getBytes(StandardCharsets.UTF_8);
-        try (OutputStream outputStream = connection.getOutputStream()) {
-            outputStream.write(body);
-        }
-
-        int statusCode = connection.getResponseCode();
-        String responseBody = docResponse(connection, statusCode);
-        connection.disconnect();
-
-        if (statusCode < 200 || statusCode >= 300) {
-            throw new Exception("HTTP " + statusCode + " - " + responseBody);
-        }
-
-        return parseTraLoi(responseBody);
-    }
-
-    private String taoUrlGemini(CauHinhAI cauHinhAI) {
-        String nhaCungCap = cauHinhAI.getNhaCungCap().trim();
-        String moHinh = chuanHoaMoHinhGemini(cauHinhAI.getMoHinh());
-
-        if (nhaCungCap.startsWith("http://") || nhaCungCap.startsWith("https://")) {
-            if (nhaCungCap.contains("{model}")) {
-                return nhaCungCap.replace("{model}", moHinh);
-            }
-            if (nhaCungCap.contains(":generateContent")) {
-                return nhaCungCap;
+    private void taiLichSuGanDay(String cauHoi, String contextDuLieu, ApiCallback<String> callback) {
+        lichSuChatDAO.layTheoNguoiDung(Session.nguoiDungHienTai.getMaNguoiDung(), new ApiCallback<List<LichSuChat>>() {
+            @Override
+            public void onSuccess(List<LichSuChat> data) {
+                goiAI(cauHoi, contextDuLieu, ghepLichSuChat(data), callback);
             }
 
-            String url = nhaCungCap.endsWith("/")
-                    ? nhaCungCap.substring(0, nhaCungCap.length() - 1)
-                    : nhaCungCap;
-            if (url.endsWith("/models")) {
-                return url + "/" + moHinh + ":generateContent";
+            @Override
+            public void onError(String thongBao) {
+                goiAI(cauHoi, contextDuLieu, "Chưa tải được lịch sử chat gần đây.", callback);
             }
-            if (url.endsWith("/v1beta")) {
-                return url + "/models/" + moHinh + ":generateContent";
+        });
+    }
+
+    private void goiAI(String cauHoi, String contextDuLieu, String lichSuGanDay, ApiCallback<String> callback) {
+        String promptHeThong = taoQuyTacTraLoi();
+        String noiDungNguoiDung = taoNoiDungNguoiDung(contextDuLieu, lichSuGanDay, cauHoi);
+
+        aiServiceController.guiNoiDung(promptHeThong, noiDungNguoiDung, new ApiCallback<String>() {
+            @Override
+            public void onSuccess(String traLoi) {
+                luuLichSu(cauHoi, traLoi, callback);
             }
-            return url + "/v1beta/models/" + moHinh + ":generateContent";
-        }
 
-        return "https://generativelanguage.googleapis.com/v1beta/models/"
-                + moHinh
-                + ":generateContent";
+            @Override
+            public void onError(String thongBao) {
+                callback.onError(thongBao);
+            }
+        });
     }
 
-    private String chuanHoaMoHinhGemini(String moHinh) {
-        String giaTri = moHinh.trim();
-        if (giaTri.startsWith("models/")) {
-            giaTri = giaTri.substring("models/".length());
-        }
-        return giaTri.toLowerCase(Locale.US);
+    private String taoQuyTacTraLoi() {
+        return "Bạn là trợ lý tư vấn vé cho ứng dụng quản lý bán vé khu du lịch.\n"
+                + "- Luôn trả lời bằng tiếng Việt có dấu.\n"
+                + "- Chỉ tư vấn trong phạm vi vé, voucher, đơn hàng và dịch vụ của ứng dụng.\n"
+                + "- Bắt buộc dựa trên dữ liệu thật được cung cấp trong prompt.\n"
+                + "- Không bịa tên vé, giá vé, voucher, hóa đơn hoặc số liệu.\n"
+                + "- Nếu dữ liệu không có trong database, hãy nói: “Hiện tại hệ thống chưa có dữ liệu này.”\n"
+                + "- Nếu người dùng hỏi vé rẻ nhất, trẻ em, gia đình hoặc người cao tuổi, hãy so sánh trên giá thật.\n"
+                + "- Nếu hỏi đơn hàng, chỉ dùng hóa đơn gần đây của chính người dùng hiện tại.\n"
+                + "- Không tự đặt vé hoặc thanh toán thay người dùng nếu chưa có flow xác nhận rõ ràng.\n"
+                + "- Nếu câu hỏi ngoài phạm vi app, trả lời ngắn gọn và điều hướng về tư vấn vé.";
     }
 
-    private JSONObject taoBody(CauHinhAI cauHinhAI, String cauHoi) throws Exception {
-        JSONObject body = new JSONObject();
-
-        if (!rong(cauHinhAI.getNhacLenh())) {
-            body.put("system_instruction", new JSONObject()
-                    .put("parts", new JSONArray()
-                            .put(new JSONObject().put("text", cauHinhAI.getNhacLenh().trim()))));
-        }
-
-        body.put("contents", new JSONArray()
-                .put(new JSONObject()
-                        .put("parts", new JSONArray()
-                                .put(new JSONObject().put("text", cauHoi)))));
-
-        return body;
+    private String taoNoiDungNguoiDung(String contextDuLieu, String lichSuGanDay, String cauHoi) {
+        return contextDuLieu
+                + "\n\nLỊCH SỬ CHAT GẦN ĐÂY\n"
+                + lichSuGanDay
+                + "\n\nCÂU HỎI HIỆN TẠI\n"
+                + cauHoi;
     }
 
-    private String docResponse(HttpURLConnection connection, int statusCode) throws Exception {
-        InputStream inputStream = statusCode >= 200 && statusCode < 300
-                ? connection.getInputStream()
-                : connection.getErrorStream();
+    private String ghepLichSuChat(List<LichSuChat> danhSachLichSu) {
+        if (danhSachLichSu == null || danhSachLichSu.isEmpty()) {
+            return "Chưa có lịch sử chat gần đây.";
+        }
 
-        if (inputStream == null) {
-            return "";
+        List<LichSuChat> danhSachGanDay = new ArrayList<>();
+        int batDau = Math.max(0, danhSachLichSu.size() - SO_LICH_SU_GUI_AI);
+        for (int i = batDau; i < danhSachLichSu.size(); i++) {
+            danhSachGanDay.add(danhSachLichSu.get(i));
         }
 
         StringBuilder builder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
+        for (LichSuChat lichSuChat : danhSachGanDay) {
+            builder.append("- Người dùng: ").append(chuoi(lichSuChat.getCauHoi())).append("\n");
+            builder.append("  AI: ").append(chuoi(lichSuChat.getTraLoi())).append("\n");
         }
         return builder.toString();
-    }
-
-    private String parseTraLoi(String responseBody) throws Exception {
-        JSONObject jsonObject = new JSONObject(responseBody);
-        JSONArray candidates = jsonObject.optJSONArray("candidates");
-        if (candidates == null || candidates.length() == 0) {
-            throw new Exception("AI không trả về nội dung");
-        }
-
-        JSONObject content = candidates.getJSONObject(0).optJSONObject("content");
-        if (content == null) {
-            String lyDo = candidates.getJSONObject(0).optString("finishReason", "");
-            throw new Exception(lyDo.isEmpty() ? "AI không trả về nội dung" : "AI dừng trả lời: " + lyDo);
-        }
-
-        JSONArray parts = content.optJSONArray("parts");
-        if (parts == null || parts.length() == 0) {
-            throw new Exception("AI không trả về nội dung");
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < parts.length(); i++) {
-            String text = parts.getJSONObject(i).optString("text", "");
-            if (!text.trim().isEmpty()) {
-                builder.append(text);
-            }
-        }
-
-        String traLoi = builder.toString().trim();
-        if (traLoi.isEmpty()) {
-            throw new Exception("AI trả lời rỗng");
-        }
-
-        return traLoi;
     }
 
     private void luuLichSu(String cauHoi, String traLoi, ApiCallback<String> callback) {
@@ -239,20 +131,12 @@ public class ChatAIController {
 
             @Override
             public void onError(String thongBao) {
-                callback.onError(thongBao);
+                callback.onSuccess(traLoi);
             }
         });
     }
 
-    private boolean rong(String chuoi) {
-        return chuoi == null || chuoi.trim().isEmpty();
-    }
-
-    private boolean laCauHinhGemini(String nhaCungCap) {
-        if (rong(nhaCungCap)) {
-            return false;
-        }
-        String giaTri = nhaCungCap.toLowerCase(Locale.US);
-        return giaTri.contains("gemini") || giaTri.contains("generativelanguage.googleapis.com");
+    private String chuoi(String giaTri) {
+        return giaTri == null ? "" : giaTri.trim();
     }
 }

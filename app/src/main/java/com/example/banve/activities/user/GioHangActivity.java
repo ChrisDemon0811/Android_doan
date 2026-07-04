@@ -74,6 +74,7 @@ public class GioHangActivity extends AppCompatActivity {
         lblTongTien = findViewById(R.id.lblTongTien);
         btnThanhToan = findViewById(R.id.btnThanhToan);
         btnTiepTucMua = findViewById(R.id.btnTiepTucMua);
+        findViewById(R.id.btnQuayLai).setOnClickListener(v -> finish());
     }
 
     private void khoiTaoRecyclerView() {

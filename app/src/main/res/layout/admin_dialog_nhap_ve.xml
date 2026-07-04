@@ -100,14 +100,32 @@
             android:inputType="textMultiLine"
             android:minLines="2" />
 
-        <EditText
-            android:id="@+id/edtAnhVeUrl"
-            style="@style/App.Input"
+        <TextView
+            android:id="@+id/lblAnhVeDaChon"
+            style="@style/App.Text.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
-            android:hint="URL ảnh vé"
-            android:inputType="textUri" />
+            android:text="Chưa chọn ảnh vé" />
+
+        <ImageView
+            android:id="@+id/imgAnhVeXemTruoc"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/img_card_height"
+            android:layout_marginTop="@dimen/space_sm"
+            android:background="@drawable/bg_card_modern"
+            android:contentDescription="Ảnh vé xem trước"
+            android:padding="@dimen/space_xs"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher" />
+
+        <Button
+            android:id="@+id/btnChonAnhVe"
+            style="@style/App.Button.Outline"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_height"
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="🖼️ Chọn ảnh từ máy" />
 
         <Switch
             android:id="@+id/swtTrangThai"

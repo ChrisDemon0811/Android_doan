@@ -49,6 +49,7 @@ public class ChatAIActivity extends AppCompatActivity {
         pgbDangTra = findViewById(R.id.pgbDangTra);
         edtCauHoi = findViewById(R.id.edtCauHoi);
         btnGui = findViewById(R.id.btnGui);
+        findViewById(R.id.btnQuayLai).setOnClickListener(v -> finish());
     }
 
     private void khoiTaoRecyclerView() {

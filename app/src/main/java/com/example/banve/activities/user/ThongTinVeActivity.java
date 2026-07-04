@@ -56,6 +56,7 @@ public class ThongTinVeActivity extends AppCompatActivity {
         lblGiaTreEm = findViewById(R.id.lblGiaTreEm);
         lblGiaCaoTuoi = findViewById(R.id.lblGiaCaoTuoi);
         btnChonVe = findViewById(R.id.btnChonVe);
+        findViewById(R.id.btnQuayLai).setOnClickListener(v -> finish());
     }
 
     private void taiThongTinVe(int maVe) {

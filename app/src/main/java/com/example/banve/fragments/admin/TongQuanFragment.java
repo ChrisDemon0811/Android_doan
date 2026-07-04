@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import com.example.banve.R;
 import com.example.banve.adapters.ThongKeLoaiVeAdapter;
 import com.example.banve.adapters.ThongKeNgayAdapter;
 import com.example.banve.adapters.ThongKeThangAdapter;
+import com.example.banve.controllers.AIThongKeController;
 import com.example.banve.controllers.ThongKeController;
 import com.example.banve.models.KetQuaThongKe;
 import com.example.banve.models.ThongKeTongQuan;
@@ -35,6 +37,7 @@ public class TongQuanFragment extends Fragment {
     private Button btnTuNgay;
     private Button btnDenNgay;
     private Button btnLoc;
+    private Button btnPhanTichAI;
     private ProgressBar pgbDangTai;
     private TextView lblTongHoaDon;
     private TextView lblTongDoanhThu;
@@ -48,6 +51,7 @@ public class TongQuanFragment extends Fragment {
     private ThongKeNgayAdapter thongKeNgayAdapter;
     private ThongKeThangAdapter thongKeThangAdapter;
     private ThongKeController thongKeController;
+    private AIThongKeController aiThongKeController;
     private final Calendar tuNgayCalendar = Calendar.getInstance();
     private final Calendar denNgayCalendar = Calendar.getInstance();
     private final SimpleDateFormat dinhDangNgay = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -58,6 +62,7 @@ public class TongQuanFragment extends Fragment {
         View view = inflater.inflate(R.layout.admin_fragment_thong_ke, container, false);
         anhXa(view);
         thongKeController = new ThongKeController();
+        aiThongKeController = new AIThongKeController();
         khoiTaoNgayMacDinh();
         khoiTaoRecyclerView();
         batSuKien();
@@ -69,6 +74,7 @@ public class TongQuanFragment extends Fragment {
         btnTuNgay = view.findViewById(R.id.btnTuNgay);
         btnDenNgay = view.findViewById(R.id.btnDenNgay);
         btnLoc = view.findViewById(R.id.btnLoc);
+        btnPhanTichAI = view.findViewById(R.id.btnPhanTichAI);
         pgbDangTai = view.findViewById(R.id.pgbDangTai);
         lblTongHoaDon = view.findViewById(R.id.lblTongHoaDon);
         lblTongDoanhThu = view.findViewById(R.id.lblTongDoanhThu);
@@ -107,6 +113,7 @@ public class TongQuanFragment extends Fragment {
         btnTuNgay.setOnClickListener(v -> moDialogChonNgay(tuNgayCalendar, this::capNhatNutNgay));
         btnDenNgay.setOnClickListener(v -> moDialogChonNgay(denNgayCalendar, this::capNhatNutNgay));
         btnLoc.setOnClickListener(v -> taiThongKe());
+        btnPhanTichAI.setOnClickListener(v -> phanTichBangAI());
     }
 
     private void taiThongKe() {
@@ -132,6 +139,55 @@ public class TongQuanFragment extends Fragment {
                 baoLoi("Lỗi thống kê", thongBao);
             }
         });
+    }
+
+    private void phanTichBangAI() {
+        Date tuNgay = tuNgayCalendar.getTime();
+        Date denNgay = denNgayCalendar.getTime();
+
+        if (tuNgay.after(denNgay)) {
+            baoLoi("Lỗi phân tích AI", "Từ ngày không được lớn hơn đến ngày");
+            return;
+        }
+
+        hienDangTai(true);
+        aiThongKeController.phanTichThongKe(tuNgay, denNgay, new ApiCallback<String>() {
+            @Override
+            public void onSuccess(String data) {
+                hienDangTai(false);
+                hienDialogPhanTichAI(data);
+            }
+
+            @Override
+            public void onError(String thongBao) {
+                hienDangTai(false);
+                baoLoi("Lỗi phân tích AI", thongBao);
+            }
+        });
+    }
+
+    private void hienDialogPhanTichAI(String noiDung) {
+        if (getContext() == null) {
+            return;
+        }
+
+        TextView lblNoiDung = new TextView(requireContext());
+        lblNoiDung.setText(noiDung == null || noiDung.trim().isEmpty()
+                ? "AI chưa trả về nội dung phân tích."
+                : noiDung.trim());
+        lblNoiDung.setTextSize(15);
+        lblNoiDung.setLineSpacing(6, 1.05f);
+        int padding = getResources().getDimensionPixelSize(R.dimen.card_padding);
+        lblNoiDung.setPadding(padding, padding, padding, padding);
+
+        ScrollView scrollView = new ScrollView(requireContext());
+        scrollView.addView(lblNoiDung);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("🤖 AI phân tích doanh thu")
+                .setView(scrollView)
+                .setPositiveButton("Đóng", null)
+                .show();
     }
 
     private void moDialogChonNgay(Calendar ngayDangChon, Runnable sauKhiChon) {
@@ -180,6 +236,9 @@ public class TongQuanFragment extends Fragment {
     private void hienDangTai(boolean dangTai) {
         pgbDangTai.setVisibility(dangTai ? View.VISIBLE : View.GONE);
         btnLoc.setEnabled(!dangTai);
+        btnPhanTichAI.setEnabled(!dangTai);
+        btnTuNgay.setEnabled(!dangTai);
+        btnDenNgay.setEnabled(!dangTai);
     }
 
     private void baoLoi(String tieuDe, String noiDung) {

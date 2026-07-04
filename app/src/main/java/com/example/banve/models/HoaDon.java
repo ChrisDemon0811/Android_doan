@@ -2,6 +2,8 @@ package com.example.banve.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class HoaDon {
     @SerializedName("MaHoaDon")
     private int maHoaDon;
@@ -32,6 +34,8 @@ public class HoaDon {
 
     @SerializedName("NguoiDung")
     private NguoiDung nguoiDung;
+
+    private List<ChiTietHoaDon> danhSachChiTiet;
 
     public int getMaHoaDon() {
         return maHoaDon;
@@ -111,5 +115,13 @@ public class HoaDon {
 
     public void setNguoiDung(NguoiDung nguoiDung) {
         this.nguoiDung = nguoiDung;
+    }
+
+    public List<ChiTietHoaDon> getDanhSachChiTiet() {
+        return danhSachChiTiet;
+    }
+
+    public void setDanhSachChiTiet(List<ChiTietHoaDon> danhSachChiTiet) {
+        this.danhSachChiTiet = danhSachChiTiet;
     }
 }

@@ -2,3 +2,6 @@ project_id = "zouvtylxvdbadkpbrpdb"
 
 [functions.sepay-webhook]
 verify_jwt = false
+
+[functions.upload-anh-ve]
+verify_jwt = false
