@@ -39,7 +39,10 @@
                 android:id="@+id/lblTieuDe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="📋 Lịch sử đơn hàng"
+                android:drawableStart="@drawable/ic_bv_history"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/white"
+                android:text="Lịch sử đơn hàng"
                 style="@style/App.Text.OnGradient.Heading" />
 
             <TextView
@@ -59,7 +62,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_xxl"
         android:background="@drawable/bg_card_modern"
-        android:text="📋 Chưa có đơn hàng đã thanh toán"
+        android:drawableTop="@drawable/ic_bv_history"
+        android:drawablePadding="@dimen/space_sm"
+        android:drawableTint="@color/mauTimChinh"
+        android:text="Chưa có đơn hàng đã thanh toán"
         android:visibility="gone" />
 
     <!-- ═══ Danh sách ═══ -->

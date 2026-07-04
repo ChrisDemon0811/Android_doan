@@ -15,7 +15,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="🧾 Chi tiết hóa đơn"
+            android:drawableStart="@drawable/ic_bv_receipt"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Chi tiết hóa đơn"
             style="@style/App.Text.HeadingLg" />
 
         <View

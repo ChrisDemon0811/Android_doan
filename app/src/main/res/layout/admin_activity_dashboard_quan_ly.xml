@@ -28,10 +28,13 @@
                 style="@style/App.Button.OnGradient"
                 android:layout_width="@dimen/btn_height_sm"
                 android:layout_height="@dimen/btn_height_sm"
+                android:drawableTop="@drawable/ic_bv_menu"
+                android:drawableTint="@color/white"
+                android:gravity="center"
                 android:minWidth="0dp"
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp"
-                android:text="☰"
+                android:text=""
                 android:textSize="@dimen/text_heading" />
 
             <LinearLayout
@@ -108,6 +111,9 @@
                 style="@style/App.Button.DrawerItemActive"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
+                android:drawableStart="@drawable/ic_bv_dashboard"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/white"
                 android:text="Tổng quan" />
 
             <Button
@@ -116,6 +122,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
+                android:drawableStart="@drawable/ic_bv_chart"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauChuTrenGradientPhu"
                 android:text="Thống kê" />
 
             <Button
@@ -124,6 +133,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
+                android:drawableStart="@drawable/ic_bv_ticket"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauChuTrenGradientPhu"
                 android:text="Quản lý vé" />
 
             <Button
@@ -132,6 +144,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
+                android:drawableStart="@drawable/ic_bv_category"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauChuTrenGradientPhu"
                 android:text="Loại vé" />
 
             <Button
@@ -140,6 +155,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
+                android:drawableStart="@drawable/ic_bv_voucher"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauChuTrenGradientPhu"
                 android:text="Voucher" />
 
             <Button
@@ -148,6 +166,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
+                android:drawableStart="@drawable/ic_bv_users"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauChuTrenGradientPhu"
                 android:text="Người dùng" />
 
             <Button
@@ -156,6 +177,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
+                android:drawableStart="@drawable/ic_bv_receipt"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauChuTrenGradientPhu"
                 android:text="Hóa đơn" />
 
             <Button
@@ -164,6 +188,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
+                android:drawableStart="@drawable/ic_bv_ai"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauChuTrenGradientPhu"
                 android:text="Cấu hình AI" />
 
             <Space
@@ -178,6 +205,9 @@
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_lg"
                 android:layout_marginBottom="@dimen/space_xl"
+                android:drawableStart="@drawable/ic_bv_logout"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauNguyHiem"
                 android:text="Đăng xuất"
                 android:textColor="@color/mauNguyHiem" />
         </LinearLayout>

@@ -169,7 +169,7 @@
     </style>
 
     <style name="App.Button.Danger">
-        <item name="android:background">@drawable/bg_nut_ghost</item>
+        <item name="android:background">@drawable/bg_nut_danger_outline_selector</item>
         <item name="android:textColor">@color/mauNguyHiem</item>
         <item name="android:minHeight">@dimen/btn_height_sm</item>
     </style>

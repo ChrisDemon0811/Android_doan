@@ -10,7 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="📝 Cập nhật thông tin"
+        android:drawableStart="@drawable/ic_bv_edit"
+        android:drawablePadding="@dimen/space_sm"
+        android:drawableTint="@color/mauTimChinh"
+        android:text="Cập nhật thông tin"
         style="@style/App.Text.HeadingLg" />
 
     <EditText

@@ -16,7 +16,10 @@
             style="@style/App.Text.HeadingLg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📊 Tổng quan hệ thống" />
+            android:drawableStart="@drawable/ic_bv_dashboard"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Tổng quan hệ thống" />
 
         <TextView
             android:id="@+id/lblMoTaTongQuan"

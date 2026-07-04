@@ -36,9 +36,11 @@
             style="@style/App.Text.Price" />
     </LinearLayout>
 
-    <TextView
+    <ImageView
         style="@style/App.Badge.Warning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="🎁" />
+        android:contentDescription="Voucher"
+        android:src="@drawable/ic_bv_voucher"
+        android:tint="@color/mauCamChinh" />
 </LinearLayout>

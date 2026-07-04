@@ -184,7 +184,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
-                android:text="🔒 Đổi mật khẩu" />
+                android:drawableStart="@drawable/ic_bv_lock"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauTimChinh"
+                android:text="Đổi mật khẩu" />
 
             <Button
                 android:id="@+id/btnDangXuat"

@@ -18,7 +18,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="🎫 Quản lý vé" />
+            android:drawableStart="@drawable/ic_bv_ticket"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Quản lý vé" />
 
         <Button
             android:id="@+id/btnBoLoc"
@@ -28,7 +31,10 @@
             android:minWidth="@dimen/btn_height"
             android:paddingStart="@dimen/space_lg"
             android:paddingEnd="@dimen/space_lg"
-            android:text="🔎 Lọc" />
+            android:drawableStart="@drawable/ic_bv_search"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Lọc" />
     </LinearLayout>
 
     <LinearLayout
@@ -46,7 +52,7 @@
             style="@style/App.Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="🔍 Tìm theo tên vé"
+            android:hint="Tìm theo tên vé"
             android:inputType="text"
             android:singleLine="true" />
 
@@ -65,7 +71,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
         android:layout_marginTop="@dimen/space_sm"
-        android:text="➕ Thêm vé" />
+        android:drawableStart="@drawable/ic_bv_add"
+        android:drawablePadding="@dimen/space_sm"
+        android:drawableTint="@color/white"
+        android:text="Thêm vé" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvDanhSachVe"

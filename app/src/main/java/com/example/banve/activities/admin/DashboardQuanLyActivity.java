@@ -1,6 +1,7 @@
 package com.example.banve.activities.admin;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -142,9 +143,11 @@ public class DashboardQuanLyActivity extends AppCompatActivity {
             if (nut == nutDangChon) {
                 nut.setBackgroundResource(R.drawable.bg_bottom_nav_active);
                 nut.setTextColor(getResources().getColor(R.color.white));
+                nut.setCompoundDrawableTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
             } else {
                 nut.setBackgroundColor(Color.TRANSPARENT);
                 nut.setTextColor(getResources().getColor(R.color.mauChuTrenGradientPhu));
+                nut.setCompoundDrawableTintList(ColorStateList.valueOf(getResources().getColor(R.color.mauChuTrenGradientPhu)));
             }
         }
     }

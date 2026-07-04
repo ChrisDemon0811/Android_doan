@@ -104,7 +104,7 @@ public class QuanLyVoucherFragment extends Fragment {
     private void doiTrangThaiBoLoc() {
         if (layBoLoc.getVisibility() == View.VISIBLE) {
             layBoLoc.setVisibility(View.GONE);
-            btnBoLoc.setText("🔎 Lọc");
+        btnBoLoc.setText("Lọc");
         } else {
             layBoLoc.setVisibility(View.VISIBLE);
             btnBoLoc.setText("Ẩn lọc");

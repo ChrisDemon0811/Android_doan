@@ -15,7 +15,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="🎫 Thêm / Sửa vé"
+            android:drawableStart="@drawable/ic_bv_ticket"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Thêm / Sửa vé"
             style="@style/App.Text.HeadingLg" />
 
         <EditText
@@ -125,7 +128,10 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/btn_height"
             android:layout_marginTop="@dimen/space_sm"
-            android:text="🖼️ Chọn ảnh từ máy" />
+            android:drawableStart="@drawable/ic_bv_image"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Chọn ảnh từ máy" />
 
         <Switch
             android:id="@+id/swtTrangThai"
@@ -160,7 +166,10 @@
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginStart="@dimen/space_sm"
                 android:layout_weight="1"
-                android:text="💾 Lưu" />
+                android:drawableStart="@drawable/ic_bv_save"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/white"
+                android:text="Lưu" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

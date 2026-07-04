@@ -92,7 +92,10 @@
         android:layout_marginStart="@dimen/space_lg"
         android:layout_marginTop="@dimen/space_md"
         android:layout_marginEnd="@dimen/space_lg"
-        android:text="🎫 Vé nổi bật"
+        android:drawableStart="@drawable/ic_bv_ticket"
+        android:drawablePadding="@dimen/space_sm"
+        android:drawableTint="@color/mauTimChinh"
+        android:text="Vé nổi bật"
         style="@style/App.Text.SectionTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -129,11 +132,12 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🏠"
-                android:textSize="20sp" />
+            <ImageView
+                android:layout_width="@dimen/icon_md"
+                android:layout_height="@dimen/icon_md"
+                android:contentDescription="Trang chủ"
+                android:src="@drawable/ic_bv_home"
+                android:tint="@color/mauTimChinh" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -156,11 +160,12 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🛒"
-                android:textSize="20sp" />
+            <ImageView
+                android:layout_width="@dimen/icon_md"
+                android:layout_height="@dimen/icon_md"
+                android:contentDescription="Giỏ hàng"
+                android:src="@drawable/ic_bv_cart"
+                android:tint="@color/mauChuPhu" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -182,11 +187,12 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📋"
-                android:textSize="20sp" />
+            <ImageView
+                android:layout_width="@dimen/icon_md"
+                android:layout_height="@dimen/icon_md"
+                android:contentDescription="Lịch sử"
+                android:src="@drawable/ic_bv_history"
+                android:tint="@color/mauChuPhu" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -208,11 +214,12 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="💬"
-                android:textSize="20sp" />
+            <ImageView
+                android:layout_width="@dimen/icon_md"
+                android:layout_height="@dimen/icon_md"
+                android:contentDescription="Tin nhắn"
+                android:src="@drawable/ic_bv_chat"
+                android:tint="@color/mauChuPhu" />
 
             <TextView
                 android:layout_width="wrap_content"

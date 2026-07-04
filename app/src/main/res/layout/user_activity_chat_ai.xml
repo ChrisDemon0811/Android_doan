@@ -37,7 +37,10 @@
                 android:id="@+id/lblTieuDe"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🤖 Trợ lý ảo"
+                android:drawableStart="@drawable/ic_bv_ai"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/white"
+                android:text="Trợ lý ảo"
                 style="@style/App.Text.OnGradient.DisplaySm" />
 
             <TextView
@@ -100,6 +103,9 @@
             android:layout_marginStart="@dimen/space_sm"
             android:paddingStart="0dp"
             android:paddingEnd="0dp"
-            android:text="➤" />
+            android:drawableTop="@drawable/ic_bv_send"
+            android:drawableTint="@color/white"
+            android:gravity="center"
+            android:text="" />
     </LinearLayout>
 </LinearLayout>

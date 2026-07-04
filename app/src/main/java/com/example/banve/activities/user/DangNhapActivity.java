@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,7 +24,6 @@ public class DangNhapActivity extends AppCompatActivity {
     private CheckBox chkGhiNhoMatKhau;
     private Button btnDangNhap;
     private Button btnDangKy;
-    private TextView lblQuenMatKhau;
     private ProgressBar pgbDangTai;
     private NguoiDungController nguoiDungController;
 
@@ -51,18 +49,12 @@ public class DangNhapActivity extends AppCompatActivity {
         chkGhiNhoMatKhau = findViewById(R.id.chkGhiNhoMatKhau);
         btnDangNhap = findViewById(R.id.btnDangNhap);
         btnDangKy = findViewById(R.id.btnDangKy);
-        lblQuenMatKhau = findViewById(R.id.lblQuenMatKhau);
         pgbDangTai = findViewById(R.id.pgbDangTai);
     }
 
     private void batSuKien() {
         btnDangNhap.setOnClickListener(v -> dangNhap());
         btnDangKy.setOnClickListener(v -> startActivity(new Intent(this, DangKyActivity.class)));
-        lblQuenMatKhau.setOnClickListener(v -> TienIch.hienAlert(
-                this,
-                "Quên mật khẩu",
-                "Chức năng quên mật khẩu sẽ được bổ sung sau."
-        ));
     }
 
     private void dangNhap() {

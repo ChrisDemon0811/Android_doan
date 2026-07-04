@@ -56,7 +56,10 @@
             android:layout_height="@dimen/btn_height_sm"
             android:layout_marginEnd="@dimen/space_sm"
             android:layout_weight="1"
-            android:text="✏️ Sửa" />
+            android:drawableStart="@drawable/ic_bv_edit"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Sửa" />
 
         <Button
             android:id="@+id/btnXoa"
@@ -65,6 +68,9 @@
             android:layout_height="@dimen/btn_height_sm"
             android:layout_marginStart="@dimen/space_sm"
             android:layout_weight="1"
-            android:text="🗑️ Xóa" />
+            android:drawableStart="@drawable/ic_bv_delete"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauNguyHiem"
+            android:text="Xóa" />
     </LinearLayout>
 </LinearLayout>

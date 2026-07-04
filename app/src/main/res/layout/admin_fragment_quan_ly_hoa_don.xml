@@ -20,10 +20,13 @@
             <TextView
                 android:id="@+id/lblTieuDe"
                 style="@style/App.Text.HeadingLg"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="🧾 Quản lý hóa đơn" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableStart="@drawable/ic_bv_receipt"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Quản lý hóa đơn" />
 
             <Button
                 android:id="@+id/btnBoLoc"
@@ -33,7 +36,10 @@
                 android:minWidth="@dimen/btn_height"
                 android:paddingStart="@dimen/space_lg"
                 android:paddingEnd="@dimen/space_lg"
-                android:text="🔎 Lọc" />
+                android:drawableStart="@drawable/ic_bv_search"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauTimChinh"
+                android:text="Lọc" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,7 +57,7 @@
                 style="@style/App.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="🔍 Tìm mã hóa đơn, khách hàng"
+                android:hint="Tìm mã hóa đơn, khách hàng"
                 android:inputType="text"
                 android:singleLine="true" />
 
@@ -69,7 +75,10 @@
                     android:layout_weight="1"
                     android:paddingStart="@dimen/space_sm"
                     android:paddingEnd="@dimen/space_sm"
-                    android:text="📅 Từ ngày" />
+                    android:drawableStart="@drawable/ic_bv_calendar"
+                    android:drawablePadding="@dimen/space_xs"
+                    android:drawableTint="@color/mauTimChinh"
+                    android:text="Từ ngày" />
 
                 <Button
                     android:id="@+id/btnDenNgay"
@@ -80,7 +89,10 @@
                     android:layout_weight="1"
                     android:paddingStart="@dimen/space_sm"
                     android:paddingEnd="@dimen/space_sm"
-                    android:text="📅 Đến ngày" />
+                    android:drawableStart="@drawable/ic_bv_calendar"
+                    android:drawablePadding="@dimen/space_xs"
+                    android:drawableTint="@color/mauTimChinh"
+                    android:text="Đến ngày" />
             </LinearLayout>
 
             <Button

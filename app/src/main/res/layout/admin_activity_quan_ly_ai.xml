@@ -38,7 +38,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/space_sm"
                 android:layout_weight="1"
-                android:text="🤖 Cấu hình AI Gemini"
+                android:drawableStart="@drawable/ic_bv_ai"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/white"
+                android:text="Cấu hình AI Gemini"
                 style="@style/App.Text.OnGradient.Heading" />
         </LinearLayout>
 
@@ -102,7 +105,10 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/btn_height"
             android:layout_marginTop="@dimen/space_xl"
-            android:text="💾 Lưu cấu hình" />
+            android:drawableStart="@drawable/ic_bv_save"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/white"
+            android:text="Lưu cấu hình" />
 
         <Button
             android:id="@+id/btnKiemTra"
@@ -110,7 +116,10 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/btn_height"
             android:layout_marginTop="@dimen/space_sm"
-            android:text="🧪 Kiểm tra AI" />
+            android:drawableStart="@drawable/ic_bv_ai"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Kiểm tra AI" />
 
         <ProgressBar
             android:id="@+id/pgbDangTai"

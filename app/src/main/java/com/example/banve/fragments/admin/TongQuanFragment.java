@@ -98,7 +98,7 @@ public class TongQuanFragment extends Fragment {
                 + "\nTổng giảm giá: "
                 + DinhDangTien.dinhDang(tongQuan.getTongGiamGiaThangNay()));
 
-        lblHoaDonHomNay.setText("Hóa đơn h?m nay\n" + tongQuan.getHoaDonDaThanhToanHomNay());
+        lblHoaDonHomNay.setText("Hóa đơn hôm nay\n" + tongQuan.getHoaDonDaThanhToanHomNay());
         lblHoaDonChoThanhToan.setText("Chờ thanh toán\n" + tongQuan.getHoaDonChoThanhToan());
         lblVeBanHomNay.setText("Vé bán hôm nay\n" + tongQuan.getVeBanHomNay());
         lblVeBanThangNay.setText("Vé bán tháng này\n" + tongQuan.getVeBanThangNay());
@@ -115,7 +115,7 @@ public class TongQuanFragment extends Fragment {
         lblChiTietDoanhThuHomNay.setText("Doanh thu gộp: 0 VNĐ\nTổng giảm giá: 0 VNĐ");
         lblDoanhThuThangNay.setText("0 VNĐ");
         lblChiTietDoanhThuThangNay.setText("Doanh thu gộp: 0 VNĐ\nTổng giảm giá: 0 VNĐ");
-        lblHoaDonHomNay.setText("Hóa đơn h?m nay\n0");
+        lblHoaDonHomNay.setText("Hóa đơn hôm nay\n0");
         lblHoaDonChoThanhToan.setText("Chờ thanh toán\n0");
         lblVeBanHomNay.setText("Vé bán hôm nay\n0");
         lblVeBanThangNay.setText("Vé bán tháng này\n0");

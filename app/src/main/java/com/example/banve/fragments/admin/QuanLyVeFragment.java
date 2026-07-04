@@ -135,7 +135,7 @@ public class QuanLyVeFragment extends Fragment {
     private void doiTrangThaiBoLoc() {
         if (layBoLoc.getVisibility() == View.VISIBLE) {
             layBoLoc.setVisibility(View.GONE);
-            btnBoLoc.setText("🔎 Lọc");
+        btnBoLoc.setText("Lọc");
         } else {
             layBoLoc.setVisibility(View.VISIBLE);
             btnBoLoc.setText("Ẩn lọc");
@@ -363,7 +363,7 @@ public class QuanLyVeFragment extends Fragment {
                     @Override
                     public void onError(String thongBao) {
                         btnLuu.setEnabled(true);
-                        btnLuu.setText("💾 Lưu");
+            btnLuu.setText("Lưu");
                         baoLoi("Lỗi tải ảnh", thongBao);
                     }
                 });

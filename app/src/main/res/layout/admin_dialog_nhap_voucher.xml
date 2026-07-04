@@ -15,7 +15,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="🎁 Thêm / Sửa voucher"
+            android:drawableStart="@drawable/ic_bv_voucher"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:text="Thêm / Sửa voucher"
             style="@style/App.Text.HeadingLg" />
 
         <EditText
@@ -84,7 +87,10 @@
             android:layout_marginTop="@dimen/space_sm"
             android:clickable="true"
             android:focusable="false"
-            android:hint="📅 Ngày bắt đầu"
+            android:drawableStart="@drawable/ic_bv_calendar"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:hint="Ngày bắt đầu"
             android:inputType="none" />
 
         <EditText
@@ -95,7 +101,10 @@
             android:layout_marginTop="@dimen/space_sm"
             android:clickable="true"
             android:focusable="false"
-            android:hint="📅 Ngày kết thúc"
+            android:drawableStart="@drawable/ic_bv_calendar"
+            android:drawablePadding="@dimen/space_sm"
+            android:drawableTint="@color/mauTimChinh"
+            android:hint="Ngày kết thúc"
             android:inputType="none" />
 
         <EditText
@@ -140,7 +149,10 @@
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginStart="@dimen/space_sm"
                 android:layout_weight="1"
-                android:text="💾 Lưu" />
+                android:drawableStart="@drawable/ic_bv_save"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/white"
+                android:text="Lưu" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

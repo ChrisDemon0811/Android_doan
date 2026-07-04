@@ -10,7 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="🎁 Chọn voucher"
+        android:drawableStart="@drawable/ic_bv_voucher"
+        android:drawablePadding="@dimen/space_sm"
+        android:drawableTint="@color/mauTimChinh"
+        android:text="Chọn voucher"
         style="@style/App.Text.HeadingLg" />
 
     <androidx.recyclerview.widget.RecyclerView

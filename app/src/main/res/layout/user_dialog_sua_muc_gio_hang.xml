@@ -42,7 +42,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="🧑 Người lớn"
+                android:drawableStart="@drawable/ic_bv_adult"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauTimChinh"
+                android:text="Người lớn"
                 style="@style/App.Text.Subtitle" />
 
             <Button
@@ -82,7 +85,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="👶 Trẻ em"
+                android:drawableStart="@drawable/ic_bv_child"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauTimChinh"
+                android:text="Trẻ em"
                 style="@style/App.Text.Subtitle" />
 
             <Button
@@ -122,7 +128,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="👴 Người cao tuổi"
+                android:drawableStart="@drawable/ic_bv_senior"
+                android:drawablePadding="@dimen/space_sm"
+                android:drawableTint="@color/mauTimChinh"
+                android:text="Người cao tuổi"
                 style="@style/App.Text.Subtitle" />
 
             <Button
