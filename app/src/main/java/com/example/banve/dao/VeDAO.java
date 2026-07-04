@@ -24,6 +24,7 @@ public class VeDAO {
         Map<String, String> filter = new HashMap<>();
         filter.put("TrangThai", "eq.HoatDong");
         filter.put("select", "*");
+        filter.put("order", "GiaVe.asc,MaVe.asc");
         if (maLoaiVe != null) {
             filter.put("MaLoaiVe", "eq." + maLoaiVe);
         }
@@ -78,7 +79,7 @@ public class VeDAO {
     public void layDanhSachVeQuanLy(ApiCallback<List<Ve>> callback) {
         Map<String, String> filter = new HashMap<>();
         filter.put("select", "*,LoaiVe(*)");
-        filter.put("order", "MaVe.desc");
+        filter.put("order", "GiaVe.asc,MaVe.asc");
 
         apiService.layDanhSachVe(filter).enqueue(new Callback<List<Ve>>() {
             @Override

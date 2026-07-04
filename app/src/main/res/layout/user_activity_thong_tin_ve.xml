@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- ═══ Ảnh vé full-width ═══ -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/img_detail_height">
@@ -24,11 +23,10 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="@dimen/avatar_size_lg"
                 android:layout_gravity="bottom"
                 android:background="@drawable/bg_overlay_bottom" />
 
-            <!-- Nút quay lại trên ảnh -->
             <ImageView
                 android:id="@+id/btnQuayLai"
                 android:layout_width="@dimen/icon_xl"
@@ -42,7 +40,6 @@
                 android:src="@drawable/ic_quay_lai" />
         </FrameLayout>
 
-        <!-- ═══ Thông tin vé ═══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,35 +53,34 @@
 
             <TextView
                 android:id="@+id/lblTenVe"
+                style="@style/App.Text.DisplaySm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tên vé"
-                style="@style/App.Text.DisplaySm" />
+                android:text="Tên vé" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/border_thin"
                 android:layout_marginTop="@dimen/space_md"
                 android:layout_marginBottom="@dimen/space_md"
                 android:background="@drawable/bg_divider" />
 
             <TextView
                 android:id="@+id/lblMoTa"
+                style="@style/App.Text.BodyLg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Mô tả"
-                style="@style/App.Text.BodyLg" />
+                android:text="Mô tả" />
 
             <TextView
                 android:id="@+id/lblThongTinVe"
+                style="@style/App.Text.BodySm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_sm"
-                android:text="Thông tin vé"
-                style="@style/App.Text.BodySm" />
+                android:text="Thông tin vé" />
         </LinearLayout>
 
-        <!-- ═══ Bảng giá ═══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -97,18 +93,18 @@
             android:padding="@dimen/card_padding_lg">
 
             <TextView
+                style="@style/App.Text.Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="💰 Bảng giá"
-                style="@style/App.Text.Title" />
+                android:text="Bảng giá" />
 
             <TextView
                 android:id="@+id/lblGiaNguoiLon"
+                style="@style/App.Text.Price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
-                android:text="Người lớn: 0 VNĐ"
-                style="@style/App.Text.Price" />
+                android:text="Người lớn: 0 VNĐ" />
 
             <TextView
                 android:id="@+id/lblGiaTreEm"
@@ -129,16 +125,31 @@
                 android:textSize="@dimen/text_subtitle" />
         </LinearLayout>
 
-        <!-- ═══ Nút CTA ═══ -->
-        <Button
-            android:id="@+id/btnChonVe"
-            style="@style/App.Button.Primary"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/btn_height"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/space_lg"
             android:layout_marginTop="@dimen/space_xl"
             android:layout_marginEnd="@dimen/space_lg"
             android:layout_marginBottom="@dimen/space_xxl"
-            android:text="🎫 Chọn vé ngay" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnChonVe"
+                style="@style/App.Button.Outline"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_height"
+                android:layout_weight="1"
+                android:text="Thêm vào giỏ" />
+
+            <Button
+                android:id="@+id/btnMuaNgay"
+                style="@style/App.Button.Primary"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_height"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_weight="1"
+                android:text="Mua ngay" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

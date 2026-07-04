@@ -1,244 +1,140 @@
 package com.example.banve.fragments.admin;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.banve.R;
-import com.example.banve.adapters.ThongKeLoaiVeAdapter;
-import com.example.banve.adapters.ThongKeNgayAdapter;
-import com.example.banve.adapters.ThongKeThangAdapter;
-import com.example.banve.controllers.AIThongKeController;
-import com.example.banve.controllers.ThongKeController;
-import com.example.banve.models.KetQuaThongKe;
-import com.example.banve.models.ThongKeTongQuan;
+import com.example.banve.controllers.TongQuanController;
+import com.example.banve.models.TongQuanQuanLy;
 import com.example.banve.network.ApiCallback;
 import com.example.banve.utils.DinhDangTien;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 public class TongQuanFragment extends Fragment {
-    private Button btnTuNgay;
-    private Button btnDenNgay;
-    private Button btnLoc;
-    private Button btnPhanTichAI;
     private ProgressBar pgbDangTai;
-    private TextView lblTongHoaDon;
-    private TextView lblTongDoanhThu;
-    private TextView lblTongTienGiam;
-    private TextView lblTongThanhTien;
-    private TextView lblTongVeBan;
-    private RecyclerView rcvThongKeLoaiVe;
-    private RecyclerView rcvDoanhThuNgay;
-    private RecyclerView rcvDoanhThuThang;
-    private ThongKeLoaiVeAdapter thongKeLoaiVeAdapter;
-    private ThongKeNgayAdapter thongKeNgayAdapter;
-    private ThongKeThangAdapter thongKeThangAdapter;
-    private ThongKeController thongKeController;
-    private AIThongKeController aiThongKeController;
-    private final Calendar tuNgayCalendar = Calendar.getInstance();
-    private final Calendar denNgayCalendar = Calendar.getInstance();
-    private final SimpleDateFormat dinhDangNgay = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private TextView lblDoanhThuHomNay;
+    private TextView lblChiTietDoanhThuHomNay;
+    private TextView lblDoanhThuThangNay;
+    private TextView lblChiTietDoanhThuThangNay;
+    private TextView lblHoaDonHomNay;
+    private TextView lblHoaDonChoThanhToan;
+    private TextView lblVeBanHomNay;
+    private TextView lblVeBanThangNay;
+    private TextView lblVeDangBan;
+    private TextView lblVoucherHoatDong;
+    private TextView lblKhachHang;
+    private TextView lblVeBanChay;
+    private TextView lblGoiYNhanh;
+    private TongQuanController tongQuanController;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.admin_fragment_thong_ke, container, false);
+        View view = inflater.inflate(R.layout.admin_fragment_tong_quan, container, false);
         anhXa(view);
-        thongKeController = new ThongKeController();
-        aiThongKeController = new AIThongKeController();
-        khoiTaoNgayMacDinh();
-        khoiTaoRecyclerView();
-        batSuKien();
-        taiThongKe();
+        tongQuanController = new TongQuanController();
+        taiTongQuan();
         return view;
     }
 
     private void anhXa(View view) {
-        btnTuNgay = view.findViewById(R.id.btnTuNgay);
-        btnDenNgay = view.findViewById(R.id.btnDenNgay);
-        btnLoc = view.findViewById(R.id.btnLoc);
-        btnPhanTichAI = view.findViewById(R.id.btnPhanTichAI);
         pgbDangTai = view.findViewById(R.id.pgbDangTai);
-        lblTongHoaDon = view.findViewById(R.id.lblTongHoaDon);
-        lblTongDoanhThu = view.findViewById(R.id.lblTongDoanhThu);
-        lblTongTienGiam = view.findViewById(R.id.lblTongTienGiam);
-        lblTongThanhTien = view.findViewById(R.id.lblTongThanhTien);
-        lblTongVeBan = view.findViewById(R.id.lblTongVeBan);
-        rcvThongKeLoaiVe = view.findViewById(R.id.rcvThongKeLoaiVe);
-        rcvDoanhThuNgay = view.findViewById(R.id.rcvDoanhThuNgay);
-        rcvDoanhThuThang = view.findViewById(R.id.rcvDoanhThuThang);
+        lblDoanhThuHomNay = view.findViewById(R.id.lblDoanhThuHomNay);
+        lblChiTietDoanhThuHomNay = view.findViewById(R.id.lblChiTietDoanhThuHomNay);
+        lblDoanhThuThangNay = view.findViewById(R.id.lblDoanhThuThangNay);
+        lblChiTietDoanhThuThangNay = view.findViewById(R.id.lblChiTietDoanhThuThangNay);
+        lblHoaDonHomNay = view.findViewById(R.id.lblHoaDonHomNay);
+        lblHoaDonChoThanhToan = view.findViewById(R.id.lblHoaDonChoThanhToan);
+        lblVeBanHomNay = view.findViewById(R.id.lblVeBanHomNay);
+        lblVeBanThangNay = view.findViewById(R.id.lblVeBanThangNay);
+        lblVeDangBan = view.findViewById(R.id.lblVeDangBan);
+        lblVoucherHoatDong = view.findViewById(R.id.lblVoucherHoatDong);
+        lblKhachHang = view.findViewById(R.id.lblKhachHang);
+        lblVeBanChay = view.findViewById(R.id.lblVeBanChay);
+        lblGoiYNhanh = view.findViewById(R.id.lblGoiYNhanh);
     }
 
-    private void khoiTaoNgayMacDinh() {
-        tuNgayCalendar.setTime(new Date());
-        tuNgayCalendar.add(Calendar.DAY_OF_MONTH, -30);
-        duaVeDauNgay(tuNgayCalendar);
-
-        denNgayCalendar.setTime(new Date());
-        duaVeDauNgay(denNgayCalendar);
-        capNhatNutNgay();
-    }
-
-    private void khoiTaoRecyclerView() {
-        thongKeLoaiVeAdapter = new ThongKeLoaiVeAdapter();
-        thongKeNgayAdapter = new ThongKeNgayAdapter();
-        thongKeThangAdapter = new ThongKeThangAdapter();
-
-        rcvThongKeLoaiVe.setLayoutManager(new LinearLayoutManager(getContext()));
-        rcvThongKeLoaiVe.setAdapter(thongKeLoaiVeAdapter);
-        rcvDoanhThuNgay.setLayoutManager(new LinearLayoutManager(getContext()));
-        rcvDoanhThuNgay.setAdapter(thongKeNgayAdapter);
-        rcvDoanhThuThang.setLayoutManager(new LinearLayoutManager(getContext()));
-        rcvDoanhThuThang.setAdapter(thongKeThangAdapter);
-    }
-
-    private void batSuKien() {
-        btnTuNgay.setOnClickListener(v -> moDialogChonNgay(tuNgayCalendar, this::capNhatNutNgay));
-        btnDenNgay.setOnClickListener(v -> moDialogChonNgay(denNgayCalendar, this::capNhatNutNgay));
-        btnLoc.setOnClickListener(v -> taiThongKe());
-        btnPhanTichAI.setOnClickListener(v -> phanTichBangAI());
-    }
-
-    private void taiThongKe() {
-        Date tuNgay = tuNgayCalendar.getTime();
-        Date denNgay = denNgayCalendar.getTime();
-
-        if (tuNgay.after(denNgay)) {
-            baoLoi("Lỗi thống kê", "Từ ngày không được lớn hơn đến ngày");
-            return;
-        }
-
+    private void taiTongQuan() {
         hienDangTai(true);
-        thongKeController.layThongKeTongQuan(tuNgay, denNgay, new ApiCallback<KetQuaThongKe>() {
+        tongQuanController.layTongQuan(new ApiCallback<TongQuanQuanLy>() {
             @Override
-            public void onSuccess(KetQuaThongKe data) {
+            public void onSuccess(TongQuanQuanLy data) {
                 hienDangTai(false);
-                hienThongKe(data);
+                hienTongQuan(data);
             }
 
             @Override
             public void onError(String thongBao) {
                 hienDangTai(false);
-                baoLoi("Lỗi thống kê", thongBao);
+                hienDuLieuRong();
+                baoLoi("Lỗi tổng quan", thongBao);
             }
         });
     }
 
-    private void phanTichBangAI() {
-        Date tuNgay = tuNgayCalendar.getTime();
-        Date denNgay = denNgayCalendar.getTime();
-
-        if (tuNgay.after(denNgay)) {
-            baoLoi("Lỗi phân tích AI", "Từ ngày không được lớn hơn đến ngày");
+    private void hienTongQuan(TongQuanQuanLy tongQuan) {
+        if (tongQuan == null) {
+            hienDuLieuRong();
             return;
         }
 
-        hienDangTai(true);
-        aiThongKeController.phanTichThongKe(tuNgay, denNgay, new ApiCallback<String>() {
-            @Override
-            public void onSuccess(String data) {
-                hienDangTai(false);
-                hienDialogPhanTichAI(data);
-            }
+        lblDoanhThuHomNay.setText(DinhDangTien.dinhDang(tongQuan.getDoanhThuHomNay()));
+        lblChiTietDoanhThuHomNay.setText("Doanh thu gộp: "
+                + DinhDangTien.dinhDang(tongQuan.getDoanhThuGopHomNay())
+                + "\nTổng giảm giá: "
+                + DinhDangTien.dinhDang(tongQuan.getTongGiamGiaHomNay()));
 
-            @Override
-            public void onError(String thongBao) {
-                hienDangTai(false);
-                baoLoi("Lỗi phân tích AI", thongBao);
-            }
-        });
+        lblDoanhThuThangNay.setText(DinhDangTien.dinhDang(tongQuan.getDoanhThuThangNay()));
+        lblChiTietDoanhThuThangNay.setText("Doanh thu gộp: "
+                + DinhDangTien.dinhDang(tongQuan.getDoanhThuGopThangNay())
+                + "\nTổng giảm giá: "
+                + DinhDangTien.dinhDang(tongQuan.getTongGiamGiaThangNay()));
+
+        lblHoaDonHomNay.setText("Hóa đơn h?m nay\n" + tongQuan.getHoaDonDaThanhToanHomNay());
+        lblHoaDonChoThanhToan.setText("Chờ thanh toán\n" + tongQuan.getHoaDonChoThanhToan());
+        lblVeBanHomNay.setText("Vé bán hôm nay\n" + tongQuan.getVeBanHomNay());
+        lblVeBanThangNay.setText("Vé bán tháng này\n" + tongQuan.getVeBanThangNay());
+        lblVeDangBan.setText("Vé đang bán\n" + tongQuan.getSoVeDangBan());
+        lblVoucherHoatDong.setText("Voucher hoạt động\n" + tongQuan.getVoucherDangHoatDong());
+        lblKhachHang.setText("Khách hàng\n" + tongQuan.getTongKhachHang());
+        lblVeBanChay.setText("Bán chạy tháng này\n"
+                + chuoiBanChay(tongQuan.getTenVeBanChay(), tongQuan.getSoLuongVeBanChay()));
+        lblGoiYNhanh.setText(tongQuan.getGoiYNhanh());
     }
 
-    private void hienDialogPhanTichAI(String noiDung) {
-        if (getContext() == null) {
-            return;
+    private void hienDuLieuRong() {
+        lblDoanhThuHomNay.setText("0 VNĐ");
+        lblChiTietDoanhThuHomNay.setText("Doanh thu gộp: 0 VNĐ\nTổng giảm giá: 0 VNĐ");
+        lblDoanhThuThangNay.setText("0 VNĐ");
+        lblChiTietDoanhThuThangNay.setText("Doanh thu gộp: 0 VNĐ\nTổng giảm giá: 0 VNĐ");
+        lblHoaDonHomNay.setText("Hóa đơn h?m nay\n0");
+        lblHoaDonChoThanhToan.setText("Chờ thanh toán\n0");
+        lblVeBanHomNay.setText("Vé bán hôm nay\n0");
+        lblVeBanThangNay.setText("Vé bán tháng này\n0");
+        lblVeDangBan.setText("Vé đang bán\n0");
+        lblVoucherHoatDong.setText("Voucher hoạt động\n0");
+        lblKhachHang.setText("Khách hàng\n0");
+        lblVeBanChay.setText("Bán chạy tháng này\nChưa đủ dữ liệu");
+        lblGoiYNhanh.setText("Chưa có dữ liệu tổng quan để hiển thị.");
+    }
+
+    private String chuoiBanChay(String tenVeBanChay, int soLuong) {
+        if (tenVeBanChay == null || tenVeBanChay.trim().isEmpty() || soLuong <= 0) {
+            return "Chưa đủ dữ liệu";
         }
-
-        TextView lblNoiDung = new TextView(requireContext());
-        lblNoiDung.setText(noiDung == null || noiDung.trim().isEmpty()
-                ? "AI chưa trả về nội dung phân tích."
-                : noiDung.trim());
-        lblNoiDung.setTextSize(15);
-        lblNoiDung.setLineSpacing(6, 1.05f);
-        int padding = getResources().getDimensionPixelSize(R.dimen.card_padding);
-        lblNoiDung.setPadding(padding, padding, padding, padding);
-
-        ScrollView scrollView = new ScrollView(requireContext());
-        scrollView.addView(lblNoiDung);
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle("🤖 AI phân tích doanh thu")
-                .setView(scrollView)
-                .setPositiveButton("Đóng", null)
-                .show();
-    }
-
-    private void moDialogChonNgay(Calendar ngayDangChon, Runnable sauKhiChon) {
-        new DatePickerDialog(
-                requireContext(),
-                (view, nam, thang, ngay) -> {
-                    ngayDangChon.set(nam, thang, ngay);
-                    duaVeDauNgay(ngayDangChon);
-                    sauKhiChon.run();
-                },
-                ngayDangChon.get(Calendar.YEAR),
-                ngayDangChon.get(Calendar.MONTH),
-                ngayDangChon.get(Calendar.DAY_OF_MONTH)
-        ).show();
-    }
-
-    private void capNhatNutNgay() {
-        btnTuNgay.setText("Từ: " + dinhDangNgay.format(tuNgayCalendar.getTime()));
-        btnDenNgay.setText("Đến: " + dinhDangNgay.format(denNgayCalendar.getTime()));
-    }
-
-    private void duaVeDauNgay(Calendar calendar) {
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-    }
-
-    private void hienThongKe(KetQuaThongKe ketQua) {
-        if (ketQua == null || ketQua.getThongKeTongQuan() == null) {
-            return;
-        }
-
-        ThongKeTongQuan tongQuan = ketQua.getThongKeTongQuan();
-        lblTongHoaDon.setText("Tổng hóa đơn: " + tongQuan.getTongHoaDon());
-        lblTongDoanhThu.setText("Tổng doanh thu: " + DinhDangTien.dinhDang(tongQuan.getTongDoanhThu()));
-        lblTongTienGiam.setText("Tổng tiền giảm: " + DinhDangTien.dinhDang(tongQuan.getTongTienGiam()));
-        lblTongThanhTien.setText("Tổng thành tiền: " + DinhDangTien.dinhDang(tongQuan.getTongThanhTien()));
-        lblTongVeBan.setText("Tổng vé bán: " + tongQuan.getTongVeBan());
-
-        thongKeLoaiVeAdapter.capNhatDuLieu(ketQua.getDanhSachTheoLoaiVe());
-        thongKeNgayAdapter.capNhatDuLieu(ketQua.getDanhSachTheoNgay());
-        thongKeThangAdapter.capNhatDuLieu(ketQua.getDanhSachTheoThang());
+        return tenVeBanChay + " (" + soLuong + " vé)";
     }
 
     private void hienDangTai(boolean dangTai) {
         pgbDangTai.setVisibility(dangTai ? View.VISIBLE : View.GONE);
-        btnLoc.setEnabled(!dangTai);
-        btnPhanTichAI.setEnabled(!dangTai);
-        btnTuNgay.setEnabled(!dangTai);
-        btnDenNgay.setEnabled(!dangTai);
     }
 
     private void baoLoi(String tieuDe, String noiDung) {

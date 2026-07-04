@@ -113,6 +113,7 @@ public class HoaDonDAO {
         Map<String, String> filter = new HashMap<>();
         filter.put("MaHoaDon", "eq." + maHoaDon);
         filter.put("select", "*,Ve(*,LoaiVe(*))");
+        filter.put("order", "MaChiTietHoaDon.asc");
 
         apiService.timChiTietHoaDon(filter).enqueue(new Callback<List<ChiTietHoaDon>>() {
             @Override

@@ -366,7 +366,13 @@ public class ThanhToanController {
             return;
         }
 
-        chiTietGioHangDAO.xoaMuc(danhSachMuc.get(viTri).getChiTietGioHang().getMaChiTietGioHang(), new ApiCallback<Boolean>() {
+        int maChiTietGioHang = danhSachMuc.get(viTri).getChiTietGioHang().getMaChiTietGioHang();
+        if (maChiTietGioHang <= 0) {
+            xoaGioHangSauThanhToan(hoaDon, danhSachMuc, callback, viTri + 1);
+            return;
+        }
+
+        chiTietGioHangDAO.xoaMuc(maChiTietGioHang, new ApiCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean data) {
                 xoaGioHangSauThanhToan(hoaDon, danhSachMuc, callback, viTri + 1);

@@ -19,6 +19,7 @@ import com.example.banve.fragments.admin.QuanLyHoaDonFragment;
 import com.example.banve.fragments.admin.QuanLyNguoiDungFragment;
 import com.example.banve.fragments.admin.QuanLyVeFragment;
 import com.example.banve.fragments.admin.QuanLyVoucherFragment;
+import com.example.banve.fragments.admin.ThongKeFragment;
 import com.example.banve.fragments.admin.TongQuanFragment;
 import com.example.banve.utils.Session;
 import com.example.banve.utils.TienIch;
@@ -31,6 +32,7 @@ public class DashboardQuanLyActivity extends AppCompatActivity {
     private Button btnMoMenu;
     private Button btnDangXuat;
     private Button btnTongQuan;
+    private Button btnThongKe;
     private Button btnQuanLyVe;
     private Button btnLoaiVe;
     private Button btnVoucher;
@@ -55,7 +57,7 @@ public class DashboardQuanLyActivity extends AppCompatActivity {
         batSuKien();
 
         if (savedInstanceState == null) {
-            moFragment(new TongQuanFragment());
+            chonFragment("Tổng quan", new TongQuanFragment(), btnTongQuan);
         }
     }
 
@@ -67,6 +69,7 @@ public class DashboardQuanLyActivity extends AppCompatActivity {
         btnMoMenu = findViewById(R.id.btnMoMenu);
         btnDangXuat = findViewById(R.id.btnDangXuat);
         btnTongQuan = findViewById(R.id.btnTongQuan);
+        btnThongKe = findViewById(R.id.btnThongKe);
         btnQuanLyVe = findViewById(R.id.btnQuanLyVe);
         btnLoaiVe = findViewById(R.id.btnLoaiVe);
         btnVoucher = findViewById(R.id.btnVoucher);
@@ -88,6 +91,7 @@ public class DashboardQuanLyActivity extends AppCompatActivity {
         });
         btnMoMenu.setOnClickListener(v -> doiTrangThaiMenu());
         btnTongQuan.setOnClickListener(v -> chonFragment("Tổng quan", new TongQuanFragment(), btnTongQuan));
+        btnThongKe.setOnClickListener(v -> chonFragment("Thống kê", new ThongKeFragment(), btnThongKe));
         btnQuanLyVe.setOnClickListener(v -> chonFragment("Quản lý vé", new QuanLyVeFragment(), btnQuanLyVe));
         btnLoaiVe.setOnClickListener(v -> chonFragment("Loại vé", new PhanLoaiVeFragment(), btnLoaiVe));
         btnVoucher.setOnClickListener(v -> chonFragment("Voucher", new QuanLyVoucherFragment(), btnVoucher));
@@ -125,6 +129,7 @@ public class DashboardQuanLyActivity extends AppCompatActivity {
     private void capNhatMenuDangChon(Button nutDangChon) {
         Button[] danhSachNut = {
                 btnTongQuan,
+                btnThongKe,
                 btnQuanLyVe,
                 btnLoaiVe,
                 btnVoucher,
@@ -160,5 +165,4 @@ public class DashboardQuanLyActivity extends AppCompatActivity {
 
         super.onBackPressed();
     }
-
 }

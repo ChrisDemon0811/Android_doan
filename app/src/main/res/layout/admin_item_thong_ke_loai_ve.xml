@@ -11,10 +11,10 @@
 
     <TextView
         android:id="@+id/lblTenLoai"
+        style="@style/App.Text.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Loại vé"
-        style="@style/App.Text.Title" />
+        android:text="Loại vé" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,17 +24,17 @@
 
         <TextView
             android:id="@+id/lblSoVe"
+            style="@style/App.Text.Body"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Số vé bán: 0"
-            style="@style/App.Text.Body" />
+            android:text="Số vé bán: 0" />
 
         <TextView
             android:id="@+id/lblDoanhThu"
+            style="@style/App.Text.Price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Doanh thu: 0 VNĐ"
-            style="@style/App.Text.Price" />
+            android:text="Doanh thu: 0 VNĐ" />
     </LinearLayout>
 </LinearLayout>

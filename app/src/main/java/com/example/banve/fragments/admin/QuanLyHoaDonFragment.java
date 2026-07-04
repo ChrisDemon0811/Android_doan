@@ -238,12 +238,8 @@ public class QuanLyHoaDonFragment extends Fragment {
         TextView lblPhaiTra = view.findViewById(R.id.lblPhaiTra);
         TextView lblHinhThuc = view.findViewById(R.id.lblHinhThuc);
         TextView lblTrangThai = view.findViewById(R.id.lblTrangThai);
-        RecyclerView rcvChiTietHoaDon = view.findViewById(R.id.rcvChiTietHoaDon);
+        LinearLayout layDanhSachChiTietHoaDon = view.findViewById(R.id.layDanhSachChiTietHoaDon);
         Button btnDong = view.findViewById(R.id.btnDong);
-
-        ChiTietHoaDonAdapter chiTietAdapter = new ChiTietHoaDonAdapter();
-        rcvChiTietHoaDon.setLayoutManager(new LinearLayoutManager(getContext()));
-        rcvChiTietHoaDon.setAdapter(chiTietAdapter);
 
         lblMaHoaDon.setText("Mã hóa đơn: " + hoaDon.getMaHoaDon());
         lblHoTenKhach.setText("Khách hàng: " + layHoTenKhach(hoaDon));
@@ -256,14 +252,14 @@ public class QuanLyHoaDonFragment extends Fragment {
 
         btnDong.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
-        taiChiTietHoaDon(hoaDon.getMaHoaDon(), chiTietAdapter);
+        taiChiTietHoaDon(hoaDon.getMaHoaDon(), layDanhSachChiTietHoaDon);
     }
 
-    private void taiChiTietHoaDon(int maHoaDon, ChiTietHoaDonAdapter chiTietAdapter) {
+    private void taiChiTietHoaDon(int maHoaDon, LinearLayout layDanhSachChiTietHoaDon) {
         hoaDonController.layChiTietHoaDon(maHoaDon, new ApiCallback<List<ChiTietHoaDon>>() {
             @Override
             public void onSuccess(List<ChiTietHoaDon> data) {
-                chiTietAdapter.capNhatDuLieu(data);
+                hienThiDanhSachChiTiet(data, layDanhSachChiTietHoaDon);
             }
 
             @Override
@@ -271,6 +267,24 @@ public class QuanLyHoaDonFragment extends Fragment {
                 baoLoi("Lỗi chi tiết hóa đơn", thongBao);
             }
         });
+    }
+
+    private void hienThiDanhSachChiTiet(List<ChiTietHoaDon> danhSachChiTiet, LinearLayout layDanhSachChiTietHoaDon) {
+        layDanhSachChiTietHoaDon.removeAllViews();
+        if (danhSachChiTiet == null || danhSachChiTiet.isEmpty()) {
+            TextView lblTrong = new TextView(requireContext());
+            lblTrong.setText("Chưa có chi tiết vé cho hóa đơn này.");
+            lblTrong.setTextSize(16);
+            layDanhSachChiTietHoaDon.addView(lblTrong);
+            return;
+        }
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        for (ChiTietHoaDon chiTiet : danhSachChiTiet) {
+            View itemView = inflater.inflate(R.layout.user_item_chi_tiet_hoa_don, layDanhSachChiTietHoaDon, false);
+            ChiTietHoaDonAdapter.hienThiChiTiet(itemView, chiTiet);
+            layDanhSachChiTietHoaDon.addView(itemView);
+        }
     }
 
     private String layHoTenKhach(HoaDon hoaDon) {

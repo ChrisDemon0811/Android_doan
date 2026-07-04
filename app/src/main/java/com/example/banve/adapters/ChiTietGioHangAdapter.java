@@ -1,7 +1,5 @@
 package com.example.banve.adapters;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.banve.R;
 import com.example.banve.models.MucGioHang;
+import com.example.banve.utils.BoNhoAnh;
 import com.example.banve.utils.DinhDangTien;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ChiTietGioHangAdapter extends RecyclerView.Adapter<ChiTietGioHangAdapter.ChiTietGioHangViewHolder> {
     public interface OnMucGioHangClickListener {
@@ -31,7 +26,6 @@ public class ChiTietGioHangAdapter extends RecyclerView.Adapter<ChiTietGioHangAd
     }
 
     private final List<MucGioHang> danhSachMuc = new ArrayList<>();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(3);
     private final OnMucGioHangClickListener listener;
 
     public ChiTietGioHangAdapter(OnMucGioHangClickListener listener) {
@@ -64,8 +58,7 @@ public class ChiTietGioHangAdapter extends RecyclerView.Adapter<ChiTietGioHangAd
                         + " | CT: " + muc.getChiTietGioHang().getSoLuongNguoiCaoTuoi()
         );
         holder.lblThanhTien.setText("Thành tiền: " + DinhDangTien.dinhDang(muc.tinhThanhTien()));
-        holder.imgAnhVe.setImageResource(R.mipmap.ic_launcher);
-        taiAnhVe(muc.getVe().getAnhVe(), holder.imgAnhVe);
+        BoNhoAnh.taiAnh(muc.getVe().getAnhVe(), holder.imgAnhVe, R.mipmap.ic_launcher);
         holder.btnSua.setOnClickListener(v -> listener.onSua(muc));
         holder.btnXoa.setOnClickListener(v -> listener.onXoa(muc));
     }
@@ -73,22 +66,6 @@ public class ChiTietGioHangAdapter extends RecyclerView.Adapter<ChiTietGioHangAd
     @Override
     public int getItemCount() {
         return danhSachMuc.size();
-    }
-
-    private void taiAnhVe(String duongDanAnh, ImageView imageView) {
-        if (duongDanAnh == null || duongDanAnh.trim().isEmpty()) {
-            return;
-        }
-
-        executorService.execute(() -> {
-            try {
-                InputStream inputStream = new URL(duongDanAnh).openStream();
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                imageView.post(() -> imageView.setImageBitmap(bitmap));
-            } catch (Exception ignored) {
-                imageView.post(() -> imageView.setImageResource(R.mipmap.ic_launcher));
-            }
-        });
     }
 
     static class ChiTietGioHangViewHolder extends RecyclerView.ViewHolder {
@@ -112,4 +89,3 @@ public class ChiTietGioHangAdapter extends RecyclerView.Adapter<ChiTietGioHangAd
         }
     }
 }
-

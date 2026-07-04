@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:padding="@dimen/screen_padding">
 
-        <!-- ═══ Hero tên vé ═══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,24 +34,23 @@
 
             <TextView
                 android:id="@+id/lblTenVe"
+                style="@style/App.Text.OnGradient.Heading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/space_sm"
                 android:layout_weight="1"
-                android:text="Tên vé"
-                android:maxLines="2"
                 android:ellipsize="end"
-                style="@style/App.Text.OnGradient.Heading" />
+                android:maxLines="2"
+                android:text="Tên vé" />
         </LinearLayout>
 
-        <!-- ═══ Chọn ngày ═══ -->
         <TextView
             android:id="@+id/lblNgaySuDung"
+            style="@style/App.Text.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xl"
-            android:text="📅 Chọn ngày sử dụng"
-            style="@style/App.Text.SectionTitle" />
+            android:text="Chọn ngày sử dụng" />
 
         <DatePicker
             android:id="@+id/dtpNgaySuDung"
@@ -65,7 +63,6 @@
             android:padding="@dimen/space_sm"
             android:spinnersShown="false" />
 
-        <!-- ═══ Người lớn ═══ -->
         <LinearLayout
             android:id="@+id/layNguoiLon"
             android:layout_width="match_parent"
@@ -79,19 +76,19 @@
 
             <TextView
                 android:id="@+id/lblLoaiNguoiLon"
+                style="@style/App.Text.Subtitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingStart="@dimen/space_sm"
-                android:text="🧑 Người lớn"
-                style="@style/App.Text.Subtitle" />
+                android:text="Người lớn" />
 
             <Button
                 android:id="@+id/btnGiamNL"
                 style="@style/App.Button.Counter"
                 android:layout_width="@dimen/counter_btn_size"
                 android:layout_height="@dimen/counter_btn_size"
-                android:text="−" />
+                android:text="-" />
 
             <TextView
                 android:id="@+id/lblSoLuongNL"
@@ -108,7 +105,6 @@
                 android:text="+" />
         </LinearLayout>
 
-        <!-- ═══ Trẻ em ═══ -->
         <LinearLayout
             android:id="@+id/layTreEm"
             android:layout_width="match_parent"
@@ -122,19 +118,19 @@
 
             <TextView
                 android:id="@+id/lblLoaiTreEm"
+                style="@style/App.Text.Subtitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingStart="@dimen/space_sm"
-                android:text="👶 Trẻ em"
-                style="@style/App.Text.Subtitle" />
+                android:text="Trẻ em" />
 
             <Button
                 android:id="@+id/btnGiamTE"
                 style="@style/App.Button.Counter"
                 android:layout_width="@dimen/counter_btn_size"
                 android:layout_height="@dimen/counter_btn_size"
-                android:text="−" />
+                android:text="-" />
 
             <TextView
                 android:id="@+id/lblSoLuongTE"
@@ -151,7 +147,6 @@
                 android:text="+" />
         </LinearLayout>
 
-        <!-- ═══ Người cao tuổi ═══ -->
         <LinearLayout
             android:id="@+id/layCaoTuoi"
             android:layout_width="match_parent"
@@ -165,19 +160,19 @@
 
             <TextView
                 android:id="@+id/lblLoaiCaoTuoi"
+                style="@style/App.Text.Subtitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingStart="@dimen/space_sm"
-                android:text="👴 Người cao tuổi"
-                style="@style/App.Text.Subtitle" />
+                android:text="Người cao tuổi" />
 
             <Button
                 android:id="@+id/btnGiamCT"
                 style="@style/App.Button.Counter"
                 android:layout_width="@dimen/counter_btn_size"
                 android:layout_height="@dimen/counter_btn_size"
-                android:text="−" />
+                android:text="-" />
 
             <TextView
                 android:id="@+id/lblSoLuongCT"
@@ -194,28 +189,23 @@
                 android:text="+" />
         </LinearLayout>
 
-        <!-- ═══ Tạm tính ═══ -->
         <TextView
             android:id="@+id/lblTongTamTinh"
+            style="@style/App.Text.PriceLg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xl"
             android:background="@drawable/bg_price_badge"
             android:elevation="@dimen/elevation_md"
             android:padding="@dimen/space_lg"
-            android:text="Tạm tính: 0 VNĐ"
-            style="@style/App.Text.PriceLg" />
+            android:text="Tạm tính: 0 VNĐ" />
 
-        <!-- ═══ Nút CTA ═══ -->
         <Button
             android:id="@+id/btnThemVaoGio"
             style="@style/App.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="@dimen/btn_height"
             android:layout_marginTop="@dimen/space_lg"
-            android:text="🛒 Thêm vào giỏ" />
+            android:text="Thêm vào giỏ" />
     </LinearLayout>
 </ScrollView>
-
-
-

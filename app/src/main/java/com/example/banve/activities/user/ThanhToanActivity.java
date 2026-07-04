@@ -59,11 +59,13 @@ public class ThanhToanActivity extends AppCompatActivity {
     private double tongTien;
     private double tienGiam;
     private double phaiTra;
+    private boolean muaNgay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Session.khoiPhuc(this);
+        muaNgay = getIntent().getBooleanExtra(ChonVeActivity.EXTRA_MUA_NGAY, false);
         setContentView(R.layout.user_activity_thanh_toan);
 
         anhXa();
@@ -112,6 +114,11 @@ public class ThanhToanActivity extends AppCompatActivity {
 
         danhSachMuc.clear();
         veThanhToanAdapter.capNhatDuLieu(danhSachMuc);
+        if (muaNgay) {
+            taiDuLieuMuaNgay();
+            return;
+        }
+
         gioHangController.layDanhSachMuc(Session.nguoiDungHienTai.getMaNguoiDung(), new ApiCallback<List<ChiTietGioHang>>() {
             @Override
             public void onSuccess(List<ChiTietGioHang> data) {
@@ -129,6 +136,60 @@ public class ThanhToanActivity extends AppCompatActivity {
                 TienIch.hienAlert(ThanhToanActivity.this, "Lỗi thanh toán", thongBao);
             }
         });
+    }
+
+    private void taiDuLieuMuaNgay() {
+        ChiTietGioHang chiTietMuaNgay = taoChiTietMuaNgayTuIntent();
+        if (chiTietMuaNgay == null) {
+            TienIch.hienAlert(this, "Thông báo", "Thông tin mua ngay không hợp lệ");
+            tinhLaiTongTien();
+            return;
+        }
+
+        veController.layTheoMa(chiTietMuaNgay.getMaVe(), new ApiCallback<Ve>() {
+            @Override
+            public void onSuccess(Ve data) {
+                danhSachMuc.add(new MucGioHang(chiTietMuaNgay, data));
+                veThanhToanAdapter.capNhatDuLieu(danhSachMuc);
+                tinhLaiTongTien();
+                String loiNgaySuDung = kiemTraNgaySuDungHopLe();
+                if (loiNgaySuDung != null) {
+                    btnXacNhanThanhToan.setEnabled(false);
+                    TienIch.hienAlert(ThanhToanActivity.this, "Lỗi thanh toán", loiNgaySuDung);
+                }
+            }
+
+            @Override
+            public void onError(String thongBao) {
+                TienIch.hienAlert(ThanhToanActivity.this, "Lỗi thanh toán", thongBao);
+            }
+        });
+    }
+
+    private ChiTietGioHang taoChiTietMuaNgayTuIntent() {
+        int maVe = getIntent().getIntExtra("maVe", 0);
+        String ngaySuDung = getIntent().getStringExtra(ChonVeActivity.EXTRA_NGAY_SU_DUNG);
+        int soLuongNguoiLon = getIntent().getIntExtra(ChonVeActivity.EXTRA_SO_LUONG_NGUOI_LON, 0);
+        int soLuongTreEm = getIntent().getIntExtra(ChonVeActivity.EXTRA_SO_LUONG_TRE_EM, 0);
+        int soLuongNguoiCaoTuoi = getIntent().getIntExtra(ChonVeActivity.EXTRA_SO_LUONG_NGUOI_CAO_TUOI, 0);
+
+        if (maVe <= 0 || ngaySuDung == null || ngaySuDung.trim().isEmpty()) {
+            return null;
+        }
+        if (soLuongNguoiLon <= 0 && soLuongTreEm <= 0 && soLuongNguoiCaoTuoi <= 0) {
+            return null;
+        }
+
+        ChiTietGioHang chiTiet = new ChiTietGioHang();
+        chiTiet.setMaVe(maVe);
+        chiTiet.setNgaySuDung(ngaySuDung);
+        chiTiet.setSoLuongNguoiLon(soLuongNguoiLon);
+        chiTiet.setSoLuongTreEm(soLuongTreEm);
+        chiTiet.setSoLuongNguoiCaoTuoi(soLuongNguoiCaoTuoi);
+        chiTiet.setDonGiaNguoiLon(getIntent().getDoubleExtra(ChonVeActivity.EXTRA_DON_GIA_NGUOI_LON, 0));
+        chiTiet.setDonGiaTreEm(getIntent().getDoubleExtra(ChonVeActivity.EXTRA_DON_GIA_TRE_EM, 0));
+        chiTiet.setDonGiaNguoiCaoTuoi(getIntent().getDoubleExtra(ChonVeActivity.EXTRA_DON_GIA_NGUOI_CAO_TUOI, 0));
+        return chiTiet;
     }
 
     private void taiThongTinVeChoMuc(List<ChiTietGioHang> danhSachChiTiet, int viTri) {

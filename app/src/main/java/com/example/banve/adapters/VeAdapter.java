@@ -1,7 +1,5 @@
 package com.example.banve.adapters;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.banve.R;
 import com.example.banve.models.Ve;
+import com.example.banve.utils.BoNhoAnh;
 import com.example.banve.utils.DinhDangTien;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class VeAdapter extends RecyclerView.Adapter<VeAdapter.VeViewHolder> {
     public interface OnVeClickListener {
@@ -29,7 +24,6 @@ public class VeAdapter extends RecyclerView.Adapter<VeAdapter.VeViewHolder> {
     }
 
     private final List<Ve> danhSachVe = new ArrayList<>();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(3);
     private final OnVeClickListener listener;
 
     public VeAdapter(OnVeClickListener listener) {
@@ -56,8 +50,7 @@ public class VeAdapter extends RecyclerView.Adapter<VeAdapter.VeViewHolder> {
         Ve ve = danhSachVe.get(position);
         holder.lblTenVe.setText(ve.getTenVe());
         holder.lblGiaVe.setText(DinhDangTien.dinhDang(ve.getGiaVe()));
-        holder.imgAnhVe.setImageResource(R.mipmap.ic_launcher);
-        taiAnhVe(ve.getAnhVe(), holder.imgAnhVe);
+        BoNhoAnh.taiAnh(ve.getAnhVe(), holder.imgAnhVe, R.mipmap.ic_launcher);
         holder.btnXem.setOnClickListener(v -> listener.onClick(ve.getMaVe()));
         holder.itemView.setOnClickListener(v -> listener.onClick(ve.getMaVe()));
     }
@@ -65,22 +58,6 @@ public class VeAdapter extends RecyclerView.Adapter<VeAdapter.VeViewHolder> {
     @Override
     public int getItemCount() {
         return danhSachVe.size();
-    }
-
-    private void taiAnhVe(String duongDanAnh, ImageView imageView) {
-        if (duongDanAnh == null || duongDanAnh.trim().isEmpty()) {
-            return;
-        }
-
-        executorService.execute(() -> {
-            try {
-                InputStream inputStream = new URL(duongDanAnh).openStream();
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                imageView.post(() -> imageView.setImageBitmap(bitmap));
-            } catch (Exception ignored) {
-                imageView.post(() -> imageView.setImageResource(R.mipmap.ic_launcher));
-            }
-        });
     }
 
     static class VeViewHolder extends RecyclerView.ViewHolder {

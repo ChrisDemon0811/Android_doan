@@ -124,11 +124,12 @@
             android:text="Chi tiết vé"
             style="@style/App.Text.SectionTitle" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcvChiTietHoaDon"
+        <LinearLayout
+            android:id="@+id/layDanhSachChiTietHoaDon"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
-            android:layout_marginTop="@dimen/space_sm" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:orientation="vertical" />
 
         <Button
             android:id="@+id/btnDong"

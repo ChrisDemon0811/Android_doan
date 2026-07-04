@@ -10,7 +10,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- ═══ Hero Header Admin ═══ -->
         <LinearLayout
             android:id="@+id/layToolbar"
             android:layout_width="match_parent"
@@ -66,7 +65,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- ═══ Content ═══ -->
         <FrameLayout
             android:id="@+id/layNoiDungQuanLy"
             android:layout_width="match_parent"
@@ -74,7 +72,6 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-    <!-- ═══ Drawer phủ từ mép trái ═══ -->
     <FrameLayout
         android:id="@+id/layMenuOverlay"
         android:layout_width="match_parent"
@@ -111,7 +108,15 @@
                 style="@style/App.Button.DrawerItemActive"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
-                android:text="📊  Tổng quan" />
+                android:text="Tổng quan" />
+
+            <Button
+                android:id="@+id/btnThongKe"
+                style="@style/App.Button.DrawerItem"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/btn_height"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="Thống kê" />
 
             <Button
                 android:id="@+id/btnQuanLyVe"
@@ -119,7 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
-                android:text="🎫  Quản lý vé" />
+                android:text="Quản lý vé" />
 
             <Button
                 android:id="@+id/btnLoaiVe"
@@ -127,7 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
-                android:text="📂  Loại vé" />
+                android:text="Loại vé" />
 
             <Button
                 android:id="@+id/btnVoucher"
@@ -135,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
-                android:text="🎁  Voucher" />
+                android:text="Voucher" />
 
             <Button
                 android:id="@+id/btnNguoiDung"
@@ -143,7 +148,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
-                android:text="👥  Người dùng" />
+                android:text="Người dùng" />
 
             <Button
                 android:id="@+id/btnHoaDon"
@@ -151,7 +156,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
-                android:text="🧾  Hóa đơn" />
+                android:text="Hóa đơn" />
 
             <Button
                 android:id="@+id/btnCauHinhAI"
@@ -159,7 +164,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_sm"
-                android:text="🤖  Cấu hình AI" />
+                android:text="Cấu hình AI" />
 
             <Space
                 android:layout_width="match_parent"
@@ -173,7 +178,7 @@
                 android:layout_height="@dimen/btn_height"
                 android:layout_marginTop="@dimen/space_lg"
                 android:layout_marginBottom="@dimen/space_xl"
-                android:text="🚪  Đăng xuất"
+                android:text="Đăng xuất"
                 android:textColor="@color/mauNguyHiem" />
         </LinearLayout>
     </FrameLayout>

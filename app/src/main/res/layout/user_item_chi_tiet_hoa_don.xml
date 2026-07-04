@@ -8,11 +8,21 @@
     android:orientation="vertical"
     android:padding="@dimen/card_padding">
 
+    <ImageView
+        android:id="@+id/imgAnhVe"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/img_card_height"
+        android:background="@drawable/bg_card_modern"
+        android:contentDescription="Ảnh vé"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher" />
+
     <TextView
         android:id="@+id/lblTenVe"
         style="@style/App.Text.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
         android:text="Tên vé" />
 
     <TextView

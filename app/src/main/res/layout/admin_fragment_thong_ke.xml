@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_man_hinh">
+    android:background="@drawable/bg_man_hinh"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,12 +13,18 @@
 
         <TextView
             android:id="@+id/lblTieuDeThongKe"
+            style="@style/App.Text.HeadingLg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📈 Thống kê tổng quan"
-            style="@style/App.Text.HeadingLg" />
+            android:text="Thống kê doanh thu" />
 
-        <!-- ═══ Date range ═══ -->
+        <TextView
+            style="@style/App.Text.BodySm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:text="Chọn ngày hoặc khoảng tháng để xem báo cáo chi tiết." />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +39,7 @@
                 android:layout_weight="1"
                 android:paddingStart="@dimen/space_sm"
                 android:paddingEnd="@dimen/space_sm"
-                android:text="📅 Từ ngày" />
+                android:text="Từ ngày" />
 
             <Button
                 android:id="@+id/btnDenNgay"
@@ -43,7 +50,46 @@
                 android:layout_weight="1"
                 android:paddingStart="@dimen/space_sm"
                 android:paddingEnd="@dimen/space_sm"
-                android:text="📅 Đến ngày" />
+                android:text="Đến ngày" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnHomNay"
+                style="@style/App.Button.Ghost"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_height_sm"
+                android:layout_weight="1"
+                android:paddingStart="@dimen/space_xs"
+                android:paddingEnd="@dimen/space_xs"
+                android:text="Hôm nay" />
+
+            <Button
+                android:id="@+id/btnThangNay"
+                style="@style/App.Button.Ghost"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_height_sm"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_weight="1"
+                android:paddingStart="@dimen/space_xs"
+                android:paddingEnd="@dimen/space_xs"
+                android:text="Tháng này" />
+
+            <Button
+                android:id="@+id/btnThangTruoc"
+                style="@style/App.Button.Ghost"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_height_sm"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_weight="1"
+                android:paddingStart="@dimen/space_xs"
+                android:paddingEnd="@dimen/space_xs"
+                android:text="Tháng trước" />
         </LinearLayout>
 
         <Button
@@ -52,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/btn_height"
             android:layout_marginTop="@dimen/space_sm"
-            android:text="🔍 Lọc thống kê" />
+            android:text="Lọc thống kê" />
 
         <Button
             android:id="@+id/btnPhanTichAI"
@@ -60,7 +106,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/btn_height"
             android:layout_marginTop="@dimen/space_sm"
-            android:text="🤖 AI phân tích doanh thu" />
+            android:text="AI phân tích doanh thu" />
 
         <ProgressBar
             android:id="@+id/pgbDangTai"
@@ -71,24 +117,23 @@
             android:indeterminateTint="@color/mauTimChinh"
             android:visibility="gone" />
 
-        <!-- ═══ Tổng quan stats ═══ -->
         <TextView
+            style="@style/App.Text.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xl"
-            android:text="Tổng quan"
-            style="@style/App.Text.SectionTitle" />
+            android:text="Tổng quan" />
 
         <TextView
             android:id="@+id/lblTongHoaDon"
+            style="@style/App.Text.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
             android:background="@drawable/bg_card_modern"
             android:elevation="@dimen/elevation_sm"
             android:padding="@dimen/card_padding"
-            android:text="Tổng hóa đơn: 0"
-            style="@style/App.Text.Body" />
+            android:text="Tổng hóa đơn đã thanh toán: 0" />
 
         <TextView
             android:id="@+id/lblTongDoanhThu"
@@ -98,21 +143,21 @@
             android:background="@drawable/bg_stat_card_2"
             android:elevation="@dimen/elevation_sm"
             android:padding="@dimen/card_padding"
-            android:text="Tổng doanh thu: 0 VNĐ"
+            android:text="Doanh thu gộp: 0 VNĐ"
             android:textColor="@color/white"
             android:textSize="@dimen/text_body_lg"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblTongTienGiam"
+            style="@style/App.Text.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
             android:background="@drawable/bg_card_modern"
             android:elevation="@dimen/elevation_sm"
             android:padding="@dimen/card_padding"
-            android:text="Tổng tiền giảm: 0 VNĐ"
-            style="@style/App.Text.Body" />
+            android:text="Tổng giảm giá: 0 VNĐ" />
 
         <TextView
             android:id="@+id/lblTongThanhTien"
@@ -122,29 +167,28 @@
             android:background="@drawable/bg_stat_card_1"
             android:elevation="@dimen/elevation_sm"
             android:padding="@dimen/card_padding"
-            android:text="Tổng thành tiền: 0 VNĐ"
+            android:text="Doanh thu thực nhận: 0 VNĐ"
             android:textColor="@color/white"
             android:textSize="@dimen/text_body_lg"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblTongVeBan"
+            style="@style/App.Text.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
             android:background="@drawable/bg_card_modern"
             android:elevation="@dimen/elevation_sm"
             android:padding="@dimen/card_padding"
-            android:text="Tổng vé bán: 0"
-            style="@style/App.Text.Body" />
+            android:text="Tổng vé bán: 0" />
 
-        <!-- ═══ Theo loại vé ═══ -->
         <TextView
+            style="@style/App.Text.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xl"
-            android:text="Theo loại vé"
-            style="@style/App.Text.SectionTitle" />
+            android:text="Theo loại vé" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcvThongKeLoaiVe"
@@ -153,13 +197,12 @@
             android:layout_marginTop="@dimen/space_sm"
             android:nestedScrollingEnabled="false" />
 
-        <!-- ═══ Theo ngày ═══ -->
         <TextView
+            style="@style/App.Text.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xl"
-            android:text="Theo ngày"
-            style="@style/App.Text.SectionTitle" />
+            android:text="Theo ngày" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcvDoanhThuNgay"
@@ -168,13 +211,12 @@
             android:layout_marginTop="@dimen/space_sm"
             android:nestedScrollingEnabled="false" />
 
-        <!-- ═══ Theo tháng ═══ -->
         <TextView
+            style="@style/App.Text.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xl"
-            android:text="Theo tháng"
-            style="@style/App.Text.SectionTitle" />
+            android:text="Theo tháng" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcvDoanhThuThang"

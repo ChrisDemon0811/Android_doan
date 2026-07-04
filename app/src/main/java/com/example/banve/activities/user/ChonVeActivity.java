@@ -1,7 +1,7 @@
 package com.example.banve.activities.user;
 
-import android.os.Bundle;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -26,6 +26,15 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class ChonVeActivity extends AppCompatActivity {
+    public static final String EXTRA_MUA_NGAY = "muaNgay";
+    public static final String EXTRA_NGAY_SU_DUNG = "ngaySuDung";
+    public static final String EXTRA_SO_LUONG_NGUOI_LON = "soLuongNguoiLon";
+    public static final String EXTRA_SO_LUONG_TRE_EM = "soLuongTreEm";
+    public static final String EXTRA_SO_LUONG_NGUOI_CAO_TUOI = "soLuongNguoiCaoTuoi";
+    public static final String EXTRA_DON_GIA_NGUOI_LON = "donGiaNguoiLon";
+    public static final String EXTRA_DON_GIA_TRE_EM = "donGiaTreEm";
+    public static final String EXTRA_DON_GIA_NGUOI_CAO_TUOI = "donGiaNguoiCaoTuoi";
+
     private TextView lblTenVe;
     private DatePicker dtpNgaySuDung;
     private TextView lblSoLuongNL;
@@ -37,6 +46,7 @@ public class ChonVeActivity extends AppCompatActivity {
     private GioHangController gioHangController;
     private NguoiDungController nguoiDungController;
     private Ve veHienTai;
+    private boolean muaNgay;
     private int soLuongNguoiLon;
     private int soLuongTreEm;
     private int soLuongNguoiCaoTuoi;
@@ -47,6 +57,7 @@ public class ChonVeActivity extends AppCompatActivity {
         Session.khoiPhuc(this);
         setContentView(R.layout.user_activity_chon_ve);
 
+        muaNgay = getIntent().getBooleanExtra(EXTRA_MUA_NGAY, false);
         anhXa();
         cauHinhNgaySuDung();
         veController = new VeController();
@@ -54,7 +65,14 @@ public class ChonVeActivity extends AppCompatActivity {
         nguoiDungController = new NguoiDungController();
         batSuKienSoLuong();
         taiThongTinVe();
-        btnThemVaoGio.setOnClickListener(v -> themVaoGio());
+        btnThemVaoGio.setText(muaNgay ? "Thanh toán ngay" : "Thêm vào giỏ");
+        btnThemVaoGio.setOnClickListener(v -> {
+            if (muaNgay) {
+                muaNgay();
+            } else {
+                themVaoGio();
+            }
+        });
     }
 
     private void anhXa() {
@@ -130,27 +148,17 @@ public class ChonVeActivity extends AppCompatActivity {
     }
 
     private void themVaoGio() {
-        if (Session.nguoiDungHienTai == null || Session.nguoiDungHienTai.getTaiKhoan() == null) {
-            yeuCauDangNhapLai();
-            return;
-        }
-        if (veHienTai == null) {
-            TienIch.hienAlert(this, "Thông báo", "Chưa tải xong thông tin vé");
-            return;
-        }
-        if (soLuongNguoiLon <= 0 && soLuongTreEm <= 0 && soLuongNguoiCaoTuoi <= 0) {
-            TienIch.hienAlert(this, "Thông báo", "Vui lòng chọn ít nhất một vé");
+        if (!kiemTraDuLieuChonVe()) {
             return;
         }
 
         damBaoNguoiDungHopLe(new ApiCallback<NguoiDung>() {
             @Override
             public void onSuccess(NguoiDung nguoiDung) {
-                ChiTietGioHang mucMoi = taoMucGioHang();
                 btnThemVaoGio.setEnabled(false);
                 gioHangController.themHoacGopMuc(
                         nguoiDung.getMaNguoiDung(),
-                        mucMoi,
+                        taoMucGioHang(),
                         new ApiCallback<ChiTietGioHang>() {
                             @Override
                             public void onSuccess(ChiTietGioHang data) {
@@ -172,6 +180,51 @@ public class ChonVeActivity extends AppCompatActivity {
                 TienIch.hienAlert(ChonVeActivity.this, "Lỗi giỏ hàng", thongBao);
             }
         });
+    }
+
+    private void muaNgay() {
+        if (!kiemTraDuLieuChonVe()) {
+            return;
+        }
+
+        damBaoNguoiDungHopLe(new ApiCallback<NguoiDung>() {
+            @Override
+            public void onSuccess(NguoiDung nguoiDung) {
+                ChiTietGioHang mucMuaNgay = taoMucGioHang();
+                Intent intent = new Intent(ChonVeActivity.this, ThanhToanActivity.class);
+                intent.putExtra(EXTRA_MUA_NGAY, true);
+                intent.putExtra("maVe", mucMuaNgay.getMaVe());
+                intent.putExtra(EXTRA_NGAY_SU_DUNG, mucMuaNgay.getNgaySuDung());
+                intent.putExtra(EXTRA_SO_LUONG_NGUOI_LON, mucMuaNgay.getSoLuongNguoiLon());
+                intent.putExtra(EXTRA_SO_LUONG_TRE_EM, mucMuaNgay.getSoLuongTreEm());
+                intent.putExtra(EXTRA_SO_LUONG_NGUOI_CAO_TUOI, mucMuaNgay.getSoLuongNguoiCaoTuoi());
+                intent.putExtra(EXTRA_DON_GIA_NGUOI_LON, mucMuaNgay.getDonGiaNguoiLon());
+                intent.putExtra(EXTRA_DON_GIA_TRE_EM, mucMuaNgay.getDonGiaTreEm());
+                intent.putExtra(EXTRA_DON_GIA_NGUOI_CAO_TUOI, mucMuaNgay.getDonGiaNguoiCaoTuoi());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onError(String thongBao) {
+                TienIch.hienAlert(ChonVeActivity.this, "Lỗi mua ngay", thongBao);
+            }
+        });
+    }
+
+    private boolean kiemTraDuLieuChonVe() {
+        if (Session.nguoiDungHienTai == null || Session.nguoiDungHienTai.getTaiKhoan() == null) {
+            yeuCauDangNhapLai();
+            return false;
+        }
+        if (veHienTai == null) {
+            TienIch.hienAlert(this, "Thông báo", "Chưa tải xong thông tin vé");
+            return false;
+        }
+        if (soLuongNguoiLon <= 0 && soLuongTreEm <= 0 && soLuongNguoiCaoTuoi <= 0) {
+            TienIch.hienAlert(this, "Thông báo", "Vui lòng chọn ít nhất một vé");
+            return false;
+        }
+        return true;
     }
 
     private void damBaoNguoiDungHopLe(ApiCallback<NguoiDung> callback) {
@@ -234,4 +287,3 @@ public class ChonVeActivity extends AppCompatActivity {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
     }
 }
-

@@ -12,16 +12,16 @@
 
     <TextView
         android:id="@+id/lblNgay"
+        style="@style/App.Text.Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Ngày"
-        style="@style/App.Text.Title" />
+        android:text="Ngày" />
 
     <TextView
         android:id="@+id/lblDoanhThu"
+        style="@style/App.Text.Price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Doanh thu: 0 VNĐ"
-        style="@style/App.Text.Price" />
+        android:text="Doanh thu: 0 VNĐ" />
 </LinearLayout>

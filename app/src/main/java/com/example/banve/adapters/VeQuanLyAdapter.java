@@ -1,7 +1,5 @@
 package com.example.banve.adapters;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.banve.R;
 import com.example.banve.models.LoaiVe;
 import com.example.banve.models.Ve;
+import com.example.banve.utils.BoNhoAnh;
 import com.example.banve.utils.DinhDangTien;
 import com.example.banve.utils.HienThi;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class VeQuanLyAdapter extends RecyclerView.Adapter<VeQuanLyAdapter.VeQuanLyViewHolder> {
     public interface OnVeQuanLyClickListener {
@@ -35,7 +30,6 @@ public class VeQuanLyAdapter extends RecyclerView.Adapter<VeQuanLyAdapter.VeQuan
 
     private final List<Ve> danhSachGoc = new ArrayList<>();
     private final List<Ve> danhSachHienThi = new ArrayList<>();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(3);
     private final OnVeQuanLyClickListener listener;
     private String tuKhoa = "";
     private Integer maLoaiVeDangLoc;
@@ -84,8 +78,7 @@ public class VeQuanLyAdapter extends RecyclerView.Adapter<VeQuanLyAdapter.VeQuan
         holder.lblGiaVe.setText("Giá vé: " + DinhDangTien.dinhDang(ve.getGiaVe()));
         holder.lblSoLuong.setText("Số lượng: " + ve.getSoLuong());
         holder.lblTrangThai.setText("Trạng thái: " + HienThi.trangThai(ve.getTrangThai()));
-        holder.imgAnhVe.setImageResource(R.mipmap.ic_launcher);
-        taiAnhVe(ve.getAnhVe(), holder.imgAnhVe);
+        BoNhoAnh.taiAnh(ve.getAnhVe(), holder.imgAnhVe, R.mipmap.ic_launcher);
         holder.btnSua.setOnClickListener(v -> listener.onSua(ve));
         holder.btnXoa.setOnClickListener(v -> listener.onXoa(ve));
     }
@@ -101,22 +94,6 @@ public class VeQuanLyAdapter extends RecyclerView.Adapter<VeQuanLyAdapter.VeQuan
             return loaiVe.getTenLoaiVe();
         }
         return "Mã " + ve.getMaLoaiVe();
-    }
-
-    private void taiAnhVe(String duongDanAnh, ImageView imageView) {
-        if (duongDanAnh == null || duongDanAnh.trim().isEmpty()) {
-            return;
-        }
-
-        executorService.execute(() -> {
-            try {
-                InputStream inputStream = new URL(duongDanAnh).openStream();
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                imageView.post(() -> imageView.setImageBitmap(bitmap));
-            } catch (Exception ignored) {
-                imageView.post(() -> imageView.setImageResource(R.mipmap.ic_launcher));
-            }
-        });
     }
 
     static class VeQuanLyViewHolder extends RecyclerView.ViewHolder {
