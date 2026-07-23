@@ -18,9 +18,12 @@ import com.example.banve.adapters.VoucherAdapter;
 import com.example.banve.controllers.GioHangController;
 import com.example.banve.controllers.ThanhToanController;
 import com.example.banve.controllers.VeController;
+import com.example.banve.controllers.VoucherApDungController;
+import com.example.banve.dao.HoaDonDAO;
 import com.example.banve.dao.VoucherDAO;
 import com.example.banve.models.ChiTietGioHang;
 import com.example.banve.models.HoaDon;
+import com.example.banve.models.KetQuaKiemTraVoucher;
 import com.example.banve.models.MucGioHang;
 import com.example.banve.models.ThanhToanTam;
 import com.example.banve.models.Ve;
@@ -52,14 +55,20 @@ public class ThanhToanActivity extends AppCompatActivity {
     private GioHangController gioHangController;
     private VeController veController;
     private VoucherDAO voucherDAO;
+    private HoaDonDAO hoaDonDAO;
     private ThanhToanController thanhToanController;
+    private VoucherApDungController voucherApDungController;
     private final List<MucGioHang> danhSachMuc = new ArrayList<>();
     private final List<Voucher> danhSachVoucher = new ArrayList<>();
+    private final List<HoaDon> danhSachHoaDonDaThanhToan = new ArrayList<>();
+    private final List<KetQuaKiemTraVoucher> danhSachKetQuaVoucher = new ArrayList<>();
     private Voucher voucherDangChon;
     private double tongTien;
     private double tienGiam;
     private double phaiTra;
     private boolean muaNgay;
+    private boolean daTaiVoucher;
+    private boolean daTaiHoaDon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +81,9 @@ public class ThanhToanActivity extends AppCompatActivity {
         gioHangController = new GioHangController();
         veController = new VeController();
         voucherDAO = new VoucherDAO();
+        hoaDonDAO = new HoaDonDAO();
         thanhToanController = new ThanhToanController();
+        voucherApDungController = new VoucherApDungController();
         khoiTaoRecyclerView();
         batSuKien();
         taiDuLieuThanhToan();
@@ -220,26 +231,61 @@ public class ThanhToanActivity extends AppCompatActivity {
     }
 
     private void taiVoucher() {
-        voucherDAO.layDanhSachVoucherKhaDung(new ApiCallback<List<Voucher>>() {
+        if (!Session.dangDangNhap() || Session.nguoiDungHienTai == null) {
+            daTaiVoucher = true;
+            daTaiHoaDon = true;
+            tinhLaiTongTien();
+            return;
+        }
+
+        voucherDAO.layDanhSachVoucherChoThanhToan(new ApiCallback<List<Voucher>>() {
             @Override
             public void onSuccess(List<Voucher> data) {
                 danhSachVoucher.clear();
                 if (data != null) {
                     danhSachVoucher.addAll(data);
                 }
-                capNhatHienThiVoucher();
+                daTaiVoucher = true;
+                tinhLaiTongTien();
             }
 
             @Override
             public void onError(String thongBao) {
+                daTaiVoucher = true;
                 TienIch.hienAlert(ThanhToanActivity.this, "Lỗi voucher", thongBao);
+                tinhLaiTongTien();
+            }
+        });
+
+        hoaDonDAO.layDanhSachDaThanhToan(Session.nguoiDungHienTai.getMaNguoiDung(), new ApiCallback<List<HoaDon>>() {
+            @Override
+            public void onSuccess(List<HoaDon> data) {
+                danhSachHoaDonDaThanhToan.clear();
+                if (data != null) {
+                    danhSachHoaDonDaThanhToan.addAll(data);
+                }
+                daTaiHoaDon = true;
+                tinhLaiTongTien();
+            }
+
+            @Override
+            public void onError(String thongBao) {
+                daTaiHoaDon = true;
+                TienIch.hienAlert(ThanhToanActivity.this, "Lỗi voucher", "Không thể kiểm tra lịch sử sử dụng voucher");
+                tinhLaiTongTien();
             }
         });
     }
 
     private void tinhLaiTongTien() {
         tongTien = thanhToanController.tinhTongTien(danhSachMuc);
-        tienGiam = thanhToanController.apDungVoucher(voucherDangChon, tongTien);
+        capNhatDanhSachKetQuaVoucher();
+        KetQuaKiemTraVoucher ketQuaDangChon = timKetQuaVoucherDangChon();
+        if (voucherDangChon != null && (ketQuaDangChon == null || !ketQuaDangChon.isHopLe())) {
+            voucherDangChon = null;
+            ketQuaDangChon = null;
+        }
+        tienGiam = ketQuaDangChon == null ? 0 : ketQuaDangChon.getTienGiam();
         phaiTra = tongTien - tienGiam;
 
         lblTongTien.setText("Tổng tiền: " + DinhDangTien.dinhDang(tongTien));
@@ -258,7 +304,8 @@ public class ThanhToanActivity extends AppCompatActivity {
         Button btnBoChonVoucher = view.findViewById(R.id.btnBoChonVoucher);
         Button btnDong = view.findViewById(R.id.btnDong);
 
-        VoucherAdapter dialogVoucherAdapter = new VoucherAdapter(voucher -> {
+        VoucherAdapter dialogVoucherAdapter = new VoucherAdapter(ketQua -> {
+            Voucher voucher = ketQua.getVoucher();
             if (voucherDangChon != null && voucherDangChon.getMaVoucher() == voucher.getMaVoucher()) {
                 voucherDangChon = null;
             } else {
@@ -267,7 +314,7 @@ public class ThanhToanActivity extends AppCompatActivity {
             tinhLaiTongTien();
             dialog.dismiss();
         });
-        dialogVoucherAdapter.capNhatDuLieu(danhSachVoucher);
+        dialogVoucherAdapter.capNhatDuLieu(danhSachKetQuaVoucher);
         dialogVoucherAdapter.chonVoucher(voucherDangChon);
         rcvDanhSachVoucher.setLayoutManager(new LinearLayoutManager(this));
         rcvDanhSachVoucher.setAdapter(dialogVoucherAdapter);
@@ -290,6 +337,32 @@ public class ThanhToanActivity extends AppCompatActivity {
         }
 
         lblVoucherDangChon.setText(voucherDangChon.getTenVoucher() + " - giảm " + DinhDangTien.dinhDang(tienGiam));
+    }
+
+    private void capNhatDanhSachKetQuaVoucher() {
+        danhSachKetQuaVoucher.clear();
+        if (!daTaiVoucher || !daTaiHoaDon) {
+            return;
+        }
+        danhSachKetQuaVoucher.addAll(voucherApDungController.danhGiaDanhSach(
+                danhSachVoucher,
+                danhSachMuc,
+                Session.nguoiDungHienTai == null ? 0 : Session.nguoiDungHienTai.getMaNguoiDung(),
+                danhSachHoaDonDaThanhToan
+        ));
+    }
+
+    private KetQuaKiemTraVoucher timKetQuaVoucherDangChon() {
+        if (voucherDangChon == null) {
+            return null;
+        }
+        for (KetQuaKiemTraVoucher ketQua : danhSachKetQuaVoucher) {
+            if (ketQua.getVoucher() != null
+                    && ketQua.getVoucher().getMaVoucher() == voucherDangChon.getMaVoucher()) {
+                return ketQua;
+            }
+        }
+        return null;
     }
 
     private void xacNhanThanhToan() {

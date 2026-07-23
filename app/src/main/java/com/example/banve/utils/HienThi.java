@@ -27,6 +27,15 @@ public final class HienThi {
         if ("ChuaThanhToan".equals(trangThai)) {
             return "Chưa thanh toán";
         }
+        if ("ChoThanhToan".equals(trangThai)) {
+            return "Chờ thanh toán";
+        }
+        if ("DangXuLy".equals(trangThai)) {
+            return "Đang xử lý";
+        }
+        if ("LoiThanhToan".equals(trangThai)) {
+            return "Lỗi thanh toán";
+        }
         return giaTri(trangThai);
     }
 

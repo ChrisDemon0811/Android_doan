@@ -148,6 +148,10 @@ public interface ApiService {
             @Body Map<String, Object> duLieuCapNhat
     );
 
+    // Xóa hóa đơn chưa hoàn chỉnh để hoàn tác lỗi tạo chi tiết.
+    @DELETE("rest/v1/HoaDon")
+    Call<Void> xoaHoaDon(@Query("MaHoaDon") String dieuKienMaHoaDon);
+
     // Tạo thanh toán tạm SePay, chưa tạo hóa đơn thật.
     @POST("rest/v1/ThanhToanTam")
     Call<List<ThanhToanTam>> taoThanhToanTam(@Body Map<String, Object> thanhToanTam);

@@ -75,11 +75,6 @@ public class LichSuDonHangActivity extends AppCompatActivity {
     private void moChiTietHoaDon(HoaDon hoaDon) {
         Intent intent = new Intent(this, ChiTietHoaDonActivity.class);
         intent.putExtra("maHoaDon", hoaDon.getMaHoaDon());
-        intent.putExtra("ngayLap", hoaDon.getNgayLap());
-        intent.putExtra("tongTien", hoaDon.getTongTien());
-        intent.putExtra("tienGiam", hoaDon.getTienGiam());
-        intent.putExtra("thanhToan", hoaDon.getThanhToan());
         startActivity(intent);
     }
 }
-

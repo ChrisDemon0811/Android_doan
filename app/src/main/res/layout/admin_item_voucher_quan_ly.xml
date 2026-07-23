@@ -19,58 +19,103 @@
 
         <TextView
             android:id="@+id/lblMaGiamGia"
+            style="@style/App.Text.Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Mã giảm giá"
-            style="@style/App.Text.Title" />
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Mã giảm giá" />
 
         <TextView
             android:id="@+id/lblTrangThai"
+            style="@style/App.Badge.Success"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_success"
-            android:paddingStart="@dimen/space_md"
-            android:paddingTop="@dimen/space_xxs"
-            android:paddingEnd="@dimen/space_md"
-            android:paddingBottom="@dimen/space_xxs"
-            android:text="Trạng thái:"
-            android:textColor="@color/mauThanhCong"
-            android:textSize="@dimen/text_small"
-            android:textStyle="bold" />
+            android:layout_marginStart="@dimen/space_sm"
+            android:maxLines="1"
+            android:text="Hoạt động" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/lblTenVoucher"
+        style="@style/App.Text.Body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_xs"
-        android:text="Tên voucher"
-        style="@style/App.Text.Body" />
+        android:text="Tên voucher" />
 
     <TextView
         android:id="@+id/lblGiaTri"
+        style="@style/App.Text.Price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="Giá trị giảm" />
+
+    <TextView
+        android:id="@+id/lblGiamToiDa"
+        style="@style/App.Text.BodySm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_xs"
-        android:text="Giá trị:"
-        style="@style/App.Text.Price" />
+        android:text="Giảm tối đa:" />
+
+    <TextView
+        android:id="@+id/lblDonToiThieu"
+        style="@style/App.Text.BodySm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Đơn tối thiểu:" />
+
+    <TextView
+        android:id="@+id/lblSoLuongVeToiThieu"
+        style="@style/App.Text.BodySm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Số lượng vé tối thiểu:" />
+
+    <TextView
+        android:id="@+id/lblPhamVi"
+        style="@style/App.Text.BodySm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Phạm vi:" />
+
+    <TextView
+        android:id="@+id/lblGioiHanMoiNguoi"
+        style="@style/App.Text.BodySm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Giới hạn mỗi người:" />
+
+    <TextView
+        android:id="@+id/lblDoiTuong"
+        style="@style/App.Text.BodySm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Đối tượng:" />
 
     <TextView
         android:id="@+id/lblThoiHan"
+        style="@style/App.Text.BodySm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_xs"
-        android:text="Thời hạn:"
-        style="@style/App.Text.BodySm" />
+        android:text="Thời hạn:" />
 
     <TextView
         android:id="@+id/lblSoLuong"
+        style="@style/App.Text.BodySm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_xxs"
-        android:text="Số lượng:"
-        style="@style/App.Text.BodySm" />
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Số lượng còn lại:" />
 
     <LinearLayout
         android:layout_width="match_parent"

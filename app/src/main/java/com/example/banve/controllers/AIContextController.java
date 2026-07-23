@@ -165,6 +165,17 @@ public class AIContextController {
                     .append(", NgayBatDau: ").append(chuoi(voucher.getNgayBatDau()))
                     .append(", NgayKetThuc: ").append(chuoi(voucher.getNgayKetThuc()))
                     .append(", SoLuong: ").append(voucher.getSoLuong())
+                    .append(", DonToiThieu: ").append(DinhDangTien.dinhDang(voucher.getDonToiThieu()))
+                    .append(", GiamToiDa: ").append(voucher.getGiamToiDa() > 0
+                            ? DinhDangTien.dinhDang(voucher.getGiamToiDa()) : "Không giới hạn")
+                    .append(", SoLuongVeToiThieu: ").append(Math.max(1, voucher.getSoLuongVeToiThieu()))
+                    .append(", SoLanDungToiDaMoiNguoi: ").append(voucher.getSoLanDungToiDaMoiNguoi() > 0
+                            ? voucher.getSoLanDungToiDaMoiNguoi() : "Không giới hạn")
+                    .append(", ChiApDungKhachMoi: ").append(voucher.isChiApDungKhachMoi() ? "Có" : "Không")
+                    .append(", MaLoaiVeApDung: ").append(voucher.getMaLoaiVeApDung())
+                    .append(", MaVeApDung: ").append(voucher.getMaVeApDung())
+                    .append(", MucTieu: ").append(chuoi(voucher.getMucTieu()))
+                    .append(", MoTaDieuKien: ").append(chuoi(voucher.getMoTaDieuKien()))
                     .append(", TrangThai: ").append(chuoi(voucher.getTrangThai()))
                     .append("\n");
         }

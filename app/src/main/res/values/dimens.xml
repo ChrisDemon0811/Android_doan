@@ -66,6 +66,7 @@
 
     <!-- ═══ Image Heights ═══ -->
     <dimen name="img_card_height">180dp</dimen>
+    <dimen name="qr_invoice_size">220dp</dimen>
     <dimen name="img_detail_height">260dp</dimen>
     <dimen name="img_qr_height">320dp</dimen>
     <dimen name="avatar_size">56dp</dimen>

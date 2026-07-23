@@ -73,6 +73,56 @@
         android:indeterminateTint="@color/mauTimChinh"
         android:visibility="gone" />
 
+    <HorizontalScrollView
+        android:id="@+id/layGoiYCauHoi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:fillViewport="false"
+        android:paddingStart="@dimen/space_md"
+        android:paddingTop="@dimen/space_sm"
+        android:paddingEnd="@dimen/space_md"
+        android:paddingBottom="@dimen/space_sm"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnTuVanTheoNhom"
+                style="@style/App.Button.Outline"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:text="Tư vấn vé theo nhóm" />
+
+            <Button
+                android:id="@+id/btnVeReNhat"
+                style="@style/App.Button.Outline"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_marginStart="@dimen/space_sm"
+                android:text="Vé nào rẻ nhất?" />
+
+            <Button
+                android:id="@+id/btnHoiVoucher"
+                style="@style/App.Button.Outline"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_marginStart="@dimen/space_sm"
+                android:text="Voucher đang có điều kiện gì?" />
+
+            <Button
+                android:id="@+id/btnDonGanNhat"
+                style="@style/App.Button.Outline"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_marginStart="@dimen/space_sm"
+                android:text="Đơn gần nhất của tôi" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
     <!-- ═══ Input bar ═══ -->
     <LinearLayout
         android:id="@+id/layNhap"

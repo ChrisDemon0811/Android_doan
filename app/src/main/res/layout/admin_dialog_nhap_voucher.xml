@@ -12,14 +12,15 @@
         android:padding="@dimen/space_xxl">
 
         <TextView
+            android:id="@+id/lblTieuDeDialog"
+            style="@style/App.Text.HeadingLg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:drawableStart="@drawable/ic_bv_voucher"
             android:drawablePadding="@dimen/space_sm"
             android:drawableTint="@color/mauTimChinh"
-            android:text="Thêm / Sửa voucher"
-            style="@style/App.Text.HeadingLg" />
+            android:gravity="center"
+            android:text="Thêm voucher" />
 
         <EditText
             android:id="@+id/edtMaGiamGia"
@@ -28,7 +29,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xl"
             android:hint="Mã giảm giá"
-            android:inputType="textCapCharacters" />
+            android:imeOptions="actionNext"
+            android:inputType="textCapCharacters"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/edtTenVoucher"
@@ -37,13 +40,22 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
             android:hint="Tên voucher"
-            android:inputType="text" />
+            android:imeOptions="actionNext"
+            android:inputType="textCapSentences"
+            android:singleLine="true" />
+
+        <TextView
+            style="@style/App.Text.SectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="Mức giảm" />
 
         <RadioGroup
             android:id="@+id/rgKieuGiamGia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_md"
+            android:layout_marginTop="@dimen/space_sm"
             android:background="@drawable/bg_card_gradient"
             android:orientation="horizontal"
             android:padding="@dimen/space_md">
@@ -53,68 +65,313 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:buttonTint="@color/mauTimChinh"
                 android:checked="true"
                 android:minHeight="@dimen/btn_height_sm"
                 android:text="Phần trăm"
-                android:textSize="@dimen/text_body"
-                android:buttonTint="@color/mauTimChinh" />
+                android:textColor="@color/mauChuChinh"
+                android:textSize="@dimen/text_body" />
 
             <RadioButton
                 android:id="@+id/radTienMat"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:buttonTint="@color/mauTimChinh"
                 android:minHeight="@dimen/btn_height_sm"
-                android:text="Tiền mặt"
-                android:textSize="@dimen/text_body"
-                android:buttonTint="@color/mauTimChinh" />
+                android:text="Số tiền cố định"
+                android:textColor="@color/mauChuChinh"
+                android:textSize="@dimen/text_body" />
         </RadioGroup>
+
+        <TextView
+            android:id="@+id/lblGiaTriGiam"
+            style="@style/App.Text.FieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="Giá trị giảm (%)" />
 
         <EditText
             android:id="@+id/edtGiaTriGiam"
             style="@style/App.Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_sm"
-            android:hint="Giá trị giảm"
-            android:inputType="numberDecimal" />
+            android:layout_marginTop="@dimen/space_xs"
+            android:hint="Ví dụ: 10"
+            android:imeOptions="actionNext"
+            android:inputType="numberDecimal"
+            android:singleLine="true" />
+
+        <LinearLayout
+            android:id="@+id/layGiamToiDa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/App.Text.FieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="Giảm tối đa mỗi đơn (VNĐ)" />
+
+            <EditText
+                android:id="@+id/edtGiamToiDa"
+                style="@style/App.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:hint="Nhập 0 nếu không giới hạn"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/lblCanhBaoGiamToiDa"
+                style="@style/App.Text.BodySm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:text="Chưa giới hạn mức giảm tối đa; chi phí khuyến mãi trên đơn lớn có thể tăng cao."
+                android:textColor="@color/mauCanhBao"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/App.Text.FieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="Giá trị đơn hàng tối thiểu (VNĐ)" />
+
+        <EditText
+            android:id="@+id/edtDonToiThieu"
+            style="@style/App.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:hint="Nhập 0 nếu không giới hạn"
+            android:imeOptions="actionNext"
+            android:inputType="numberDecimal"
+            android:singleLine="true" />
+
+        <TextView
+            style="@style/App.Text.FieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="Số vé tối thiểu trong một đơn" />
+
+        <EditText
+            android:id="@+id/edtSoLuongVeToiThieu"
+            style="@style/App.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:hint="Ví dụ: 2"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:singleLine="true" />
+
+        <TextView
+            style="@style/App.Text.SectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="Thời hạn và lượt dùng" />
+
+        <TextView
+            style="@style/App.Text.FieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="Ngày bắt đầu áp dụng" />
 
         <EditText
             android:id="@+id/edtNgayBatDau"
             style="@style/App.Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_sm"
+            android:layout_marginTop="@dimen/space_xs"
             android:clickable="true"
-            android:focusable="false"
             android:drawableStart="@drawable/ic_bv_calendar"
             android:drawablePadding="@dimen/space_sm"
             android:drawableTint="@color/mauTimChinh"
+            android:focusable="false"
             android:hint="Ngày bắt đầu"
             android:inputType="none" />
+
+        <TextView
+            style="@style/App.Text.FieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="Ngày kết thúc áp dụng" />
 
         <EditText
             android:id="@+id/edtNgayKetThuc"
             style="@style/App.Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_sm"
+            android:layout_marginTop="@dimen/space_xs"
             android:clickable="true"
-            android:focusable="false"
             android:drawableStart="@drawable/ic_bv_calendar"
             android:drawablePadding="@dimen/space_sm"
             android:drawableTint="@color/mauTimChinh"
+            android:focusable="false"
             android:hint="Ngày kết thúc"
             android:inputType="none" />
+
+        <TextView
+            style="@style/App.Text.FieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="Số lượng voucher phát hành hoặc còn lại" />
 
         <EditText
             android:id="@+id/edtSoLuong"
             style="@style/App.Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:hint="Ví dụ: 100"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:singleLine="true" />
+
+        <TextView
+            style="@style/App.Text.FieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="Số lần dùng tối đa cho mỗi khách hàng" />
+
+        <EditText
+            android:id="@+id/edtSoLanDungToiDaMoiNguoi"
+            style="@style/App.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:hint="Nhập 0 nếu không giới hạn"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:singleLine="true" />
+
+        <Switch
+            android:id="@+id/swtChiApDungKhachMoi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:minHeight="@dimen/btn_height_sm"
+            android:text="Chỉ dành cho khách hàng mới"
+            android:textColor="@color/mauChuPhu"
+            android:textSize="@dimen/text_body" />
+
+        <TextView
+            style="@style/App.Text.SectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="Phạm vi áp dụng" />
+
+        <RadioGroup
+            android:id="@+id/rgPhamViApDung"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
-            android:hint="Số lượng"
-            android:inputType="number" />
+            android:background="@drawable/bg_card_gradient"
+            android:orientation="vertical"
+            android:padding="@dimen/space_md">
+
+            <RadioButton
+                android:id="@+id/radTatCaVe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/mauTimChinh"
+                android:checked="true"
+                android:minHeight="@dimen/btn_height_sm"
+                android:text="Tất cả vé"
+                android:textColor="@color/mauChuChinh" />
+
+            <RadioButton
+                android:id="@+id/radTheoLoaiVe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/mauTimChinh"
+                android:minHeight="@dimen/btn_height_sm"
+                android:text="Theo loại vé"
+                android:textColor="@color/mauChuChinh" />
+
+            <RadioButton
+                android:id="@+id/radTheoVe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/mauTimChinh"
+                android:minHeight="@dimen/btn_height_sm"
+                android:text="Theo vé cụ thể"
+                android:textColor="@color/mauChuChinh" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/layChonLoaiVe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:background="@drawable/bg_o_nhap"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/space_sm"
+            android:paddingEnd="@dimen/space_sm"
+            android:visibility="gone">
+
+            <Spinner
+                android:id="@+id/spnLoaiVeApDung"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_height"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layChonVe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:background="@drawable/bg_o_nhap"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/space_sm"
+            android:paddingEnd="@dimen/space_sm"
+            android:visibility="gone">
+
+            <Spinner
+                android:id="@+id/spnVeApDung"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_height"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/edtMucTieu"
+            style="@style/App.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:hint="Mục tiêu voucher"
+            android:imeOptions="actionNext"
+            android:inputType="textCapSentences"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/edtMoTaDieuKien"
+            style="@style/App.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:gravity="top|start"
+            android:hint="Mô tả điều kiện cho khách hàng"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="4"
+            android:minLines="2" />
 
         <Switch
             android:id="@+id/swtTrangThai"
@@ -126,6 +383,85 @@
             android:text="Đang hoạt động"
             android:textColor="@color/mauChuPhu"
             android:textSize="@dimen/text_body" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:background="@drawable/bg_card_gradient"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding">
+
+            <TextView
+                style="@style/App.Text.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Phân tích hiệu quả voucher" />
+
+            <TextView
+                android:id="@+id/lblSoLuotToiDa"
+                style="@style/App.Text.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="Số lượt voucher tối đa: 0" />
+
+            <TextView
+                android:id="@+id/lblDoanhThuToiThieu"
+                style="@style/App.Text.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="Doanh thu tối thiểu kích hoạt: Chưa xác định" />
+
+            <TextView
+                android:id="@+id/lblTienGiamMoiDon"
+                style="@style/App.Text.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="Tiền giảm dự kiến mỗi đơn: 0 VNĐ" />
+
+            <TextView
+                android:id="@+id/lblNganSachGiamGia"
+                style="@style/App.Text.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="Ngân sách giảm giá tối đa: Chưa xác định" />
+
+            <TextView
+                android:id="@+id/lblDoanhThuSauGiam"
+                style="@style/App.Text.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:text="Doanh thu sau giảm ước tính: Chưa xác định" />
+
+            <TextView
+                android:id="@+id/lblNguoiBanDuoc"
+                style="@style/App.Text.BodySm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="Người bán được gì:" />
+
+            <TextView
+                android:id="@+id/lblRuiRo"
+                style="@style/App.Text.BodySm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="Rủi ro cần chú ý:" />
+
+            <TextView
+                android:id="@+id/lblDanhGiaAnToan"
+                style="@style/App.Badge.Warning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="Đánh giá: Cần cân nhắc" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

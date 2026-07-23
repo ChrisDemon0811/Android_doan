@@ -159,6 +159,7 @@
                 android:checked="true"
                 android:minHeight="@dimen/btn_height_sm"
                 android:text="Thẻ tín dụng/ghi nợ quốc tế"
+                android:textColor="@color/mauChuChinh"
                 android:textSize="@dimen/text_body" />
 
             <RadioButton
@@ -168,6 +169,7 @@
                 android:buttonTint="@color/mauTimChinh"
                 android:minHeight="@dimen/btn_height_sm"
                 android:text="Chuyển khoản SePay"
+                android:textColor="@color/mauChuChinh"
                 android:textSize="@dimen/text_body" />
 
             <RadioButton
@@ -177,6 +179,7 @@
                 android:buttonTint="@color/mauTimChinh"
                 android:minHeight="@dimen/btn_height_sm"
                 android:text="VNPay"
+                android:textColor="@color/mauChuChinh"
                 android:textSize="@dimen/text_body" />
         </RadioGroup>
 

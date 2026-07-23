@@ -20,4 +20,16 @@
         android:text="Tin nhắn AI"
         android:textColor="@color/mauChuChinh"
         android:textSize="@dimen/text_body" />
+
+    <Button
+        android:id="@+id/btnThemVaoGio"
+        style="@style/App.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginTop="@dimen/space_md"
+        android:drawableStart="@drawable/ic_bv_cart"
+        android:drawablePadding="@dimen/space_sm"
+        android:drawableTint="@color/white"
+        android:text="Thêm vào giỏ"
+        android:visibility="gone" />
 </LinearLayout>

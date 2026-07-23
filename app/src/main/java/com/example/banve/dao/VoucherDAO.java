@@ -73,6 +73,48 @@ public class VoucherDAO {
         });
     }
 
+    public void layDanhSachVoucherChoThanhToan(ApiCallback<List<Voucher>> callback) {
+        Map<String, String> filter = new HashMap<>();
+        filter.put("TrangThai", "eq.HoatDong");
+        filter.put("select", "*");
+        filter.put("order", "MaVoucher.desc");
+
+        apiService.timVoucher(filter).enqueue(new Callback<List<Voucher>>() {
+            @Override
+            public void onResponse(Call<List<Voucher>> call, Response<List<Voucher>> response) {
+                if (!response.isSuccessful()) {
+                    callback.onError("Không thể tải danh sách voucher");
+                    return;
+                }
+                callback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Voucher>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+
+    public void layTheoMa(int maVoucher, ApiCallback<Voucher> callback) {
+        Map<String, String> filter = new HashMap<>();
+        filter.put("MaVoucher", "eq." + maVoucher);
+        filter.put("select", "*");
+        filter.put("limit", "1");
+
+        apiService.timVoucher(filter).enqueue(new Callback<List<Voucher>>() {
+            @Override
+            public void onResponse(Call<List<Voucher>> call, Response<List<Voucher>> response) {
+                xuLyKetQuaMotVoucher(response, callback, "Không thể tải voucher mới nhất");
+            }
+
+            @Override
+            public void onFailure(Call<List<Voucher>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+
     public void layTheoMaGiamGia(String maGiamGia, ApiCallback<Voucher> callback) {
         Map<String, String> filter = new HashMap<>();
         filter.put("MaGiamGia", "eq." + maGiamGia);
@@ -187,6 +229,15 @@ public class VoucherDAO {
         duLieu.put("NgayKetThuc", voucher.getNgayKetThuc());
         duLieu.put("SoLuong", voucher.getSoLuong());
         duLieu.put("TrangThai", voucher.getTrangThai());
+        duLieu.put("DonToiThieu", voucher.getDonToiThieu());
+        duLieu.put("GiamToiDa", voucher.getGiamToiDa());
+        duLieu.put("SoLuongVeToiThieu", voucher.getSoLuongVeToiThieu());
+        duLieu.put("SoLanDungToiDaMoiNguoi", voucher.getSoLanDungToiDaMoiNguoi());
+        duLieu.put("ChiApDungKhachMoi", voucher.isChiApDungKhachMoi());
+        duLieu.put("MaLoaiVeApDung", voucher.getMaLoaiVeApDung());
+        duLieu.put("MaVeApDung", voucher.getMaVeApDung());
+        duLieu.put("MucTieu", voucher.getMucTieu());
+        duLieu.put("MoTaDieuKien", voucher.getMoTaDieuKien());
         return duLieu;
     }
 

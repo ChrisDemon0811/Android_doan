@@ -3,6 +3,8 @@
 -- Chạy được trên Supabase PostgreSQL
 -- =========================================================
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 DROP TABLE IF EXISTS "LichSuChat", "CauHinhAI", "ChiTietHoaDon", "ChiTietThanhToanTam", "ThanhToanTam", "HoaDon", "ChiTietGioHang", "GioHang", "Voucher", "Ve", "LoaiVe", "NguoiDung" CASCADE;
 
 -- =========================================================
@@ -66,10 +68,33 @@ CREATE TABLE "Voucher" (
     "NgayBatDau" DATE NOT NULL,
     "NgayKetThuc" DATE NOT NULL,
     "SoLuong" INT DEFAULT 0,
-    "TrangThai" TEXT NOT NULL DEFAULT 'HoatDong'
+    "TrangThai" TEXT NOT NULL DEFAULT 'HoatDong',
+    "DonToiThieu" NUMERIC(18,2) NOT NULL DEFAULT 0,
+    "GiamToiDa" NUMERIC(18,2) NOT NULL DEFAULT 0,
+    "SoLuongVeToiThieu" INT NOT NULL DEFAULT 1,
+    "SoLanDungToiDaMoiNguoi" INT NOT NULL DEFAULT 0,
+    "ChiApDungKhachMoi" BOOLEAN NOT NULL DEFAULT FALSE,
+    "MaLoaiVeApDung" BIGINT REFERENCES "LoaiVe"("MaLoaiVe") ON DELETE SET NULL,
+    "MaVeApDung" BIGINT REFERENCES "Ve"("MaVe") ON DELETE SET NULL,
+    "MucTieu" TEXT,
+    "MoTaDieuKien" TEXT,
+    CONSTRAINT "Voucher_DonToiThieu_KhongAm" CHECK ("DonToiThieu" >= 0),
+    CONSTRAINT "Voucher_GiamToiDa_KhongAm" CHECK ("GiamToiDa" >= 0),
+    CONSTRAINT "Voucher_SoLuongVeToiThieu_HopLe" CHECK ("SoLuongVeToiThieu" >= 1),
+    CONSTRAINT "Voucher_SoLanDungToiDaMoiNguoi_KhongAm" CHECK ("SoLanDungToiDaMoiNguoi" >= 0),
+    CONSTRAINT "Voucher_PhamViApDung_HopLe"
+        CHECK (NOT ("MaLoaiVeApDung" IS NOT NULL AND "MaVeApDung" IS NOT NULL))
 );
 
 ALTER TABLE "Voucher" ENABLE ROW LEVEL SECURITY;
+
+CREATE INDEX "idx_Voucher_MaLoaiVeApDung"
+ON "Voucher"("MaLoaiVeApDung")
+WHERE "MaLoaiVeApDung" IS NOT NULL;
+
+CREATE INDEX "idx_Voucher_MaVeApDung"
+ON "Voucher"("MaVeApDung")
+WHERE "MaVeApDung" IS NOT NULL;
 
 -- =========================================================
 -- Bảng GioHang
@@ -105,6 +130,7 @@ ALTER TABLE "ChiTietGioHang" ENABLE ROW LEVEL SECURITY;
 -- =========================================================
 CREATE TABLE "HoaDon" (
     "MaHoaDon" BIGSERIAL PRIMARY KEY,
+    "MaXacThuc" UUID NOT NULL DEFAULT gen_random_uuid(),
     "MaNguoiDung" BIGINT NOT NULL REFERENCES "NguoiDung"("MaNguoiDung") ON DELETE CASCADE,
     "NgayLap" TIMESTAMP DEFAULT NOW(),
     "TongTien" NUMERIC(18,2) DEFAULT 0,
@@ -116,6 +142,9 @@ CREATE TABLE "HoaDon" (
 );
 
 ALTER TABLE "HoaDon" ENABLE ROW LEVEL SECURITY;
+
+CREATE UNIQUE INDEX "HoaDon_MaXacThuc_unique"
+ON "HoaDon" ("MaXacThuc");
 
 -- =========================================================
 -- Bảng ThanhToanTam
@@ -491,6 +520,328 @@ ON "ChiTietThanhToanTam"("MaHoaDon");
 CREATE INDEX IF NOT EXISTS "idx_HoaDon_NoiDungChuyenKhoan"
 ON "HoaDon"("NoiDungChuyenKhoan");
 
+CREATE INDEX IF NOT EXISTS "idx_HoaDon_NguoiDung_Voucher_ThanhToan"
+ON "HoaDon"("MaNguoiDung", "MaVoucher")
+WHERE "TrangThai" = 'DaThanhToan' AND "MaVoucher" IS NOT NULL;
+
+-- =========================================================
+-- Tự động tiêu thụ hoặc hoàn lại voucher theo hóa đơn thật.
+-- =========================================================
+CREATE SCHEMA IF NOT EXISTS private;
+REVOKE ALL ON SCHEMA private FROM PUBLIC;
+REVOKE ALL ON SCHEMA private FROM anon, authenticated;
+GRANT USAGE ON SCHEMA private TO service_role;
+
+CREATE OR REPLACE FUNCTION private.dieu_chinh_so_luong_voucher_hoa_don()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+    v_voucher public."Voucher"%ROWTYPE;
+    v_la_luot_su_dung_moi BOOLEAN;
+    v_so_hoa_don_thanh_cong INT;
+    v_so_lan_da_dung INT;
+    v_tong_so_ve INT;
+    v_tong_chi_tiet NUMERIC(18,2);
+    v_tam_tinh_ap_dung NUMERIC(18,2);
+    v_tien_giam_cho_phep NUMERIC(18,2);
+BEGIN
+    IF TG_OP = 'DELETE' THEN
+        IF OLD."TrangThai" = 'DaThanhToan' AND OLD."MaVoucher" IS NOT NULL THEN
+            UPDATE public."Voucher"
+            SET "SoLuong" = COALESCE("SoLuong", 0) + 1
+            WHERE "MaVoucher" = OLD."MaVoucher";
+        END IF;
+        RETURN OLD;
+    END IF;
+
+    IF TG_OP = 'UPDATE'
+       AND OLD."TrangThai" = 'DaThanhToan'
+       AND OLD."MaVoucher" IS NOT NULL
+       AND (
+           NEW."TrangThai" IS DISTINCT FROM 'DaThanhToan'
+           OR NEW."MaVoucher" IS DISTINCT FROM OLD."MaVoucher"
+       ) THEN
+        UPDATE public."Voucher"
+        SET "SoLuong" = COALESCE("SoLuong", 0) + 1
+        WHERE "MaVoucher" = OLD."MaVoucher";
+    END IF;
+
+    IF TG_OP = 'INSERT' THEN
+        v_la_luot_su_dung_moi := NEW."TrangThai" = 'DaThanhToan'
+            AND NEW."MaVoucher" IS NOT NULL;
+    ELSE
+        v_la_luot_su_dung_moi := NEW."TrangThai" = 'DaThanhToan'
+            AND NEW."MaVoucher" IS NOT NULL
+            AND (
+                OLD."TrangThai" IS DISTINCT FROM 'DaThanhToan'
+                OR OLD."MaVoucher" IS DISTINCT FROM NEW."MaVoucher"
+            );
+    END IF;
+
+    IF NOT v_la_luot_su_dung_moi THEN
+        RETURN NEW;
+    END IF;
+
+    PERFORM pg_catalog.pg_advisory_xact_lock(NEW."MaNguoiDung");
+
+    SELECT *
+    INTO v_voucher
+    FROM public."Voucher"
+    WHERE "MaVoucher" = NEW."MaVoucher"
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Voucher không tồn tại';
+    END IF;
+    IF v_voucher."TrangThai" <> 'HoatDong' THEN
+        RAISE EXCEPTION 'Voucher không còn hoạt động';
+    END IF;
+    IF CURRENT_DATE < v_voucher."NgayBatDau" THEN
+        RAISE EXCEPTION 'Voucher chưa đến ngày áp dụng';
+    END IF;
+    IF CURRENT_DATE > v_voucher."NgayKetThuc" THEN
+        RAISE EXCEPTION 'Voucher đã hết hạn';
+    END IF;
+    IF COALESCE(v_voucher."SoLuong", 0) <= 0 THEN
+        RAISE EXCEPTION 'Voucher đã hết lượt sử dụng';
+    END IF;
+    IF COALESCE(NEW."TongTien", 0) < COALESCE(v_voucher."DonToiThieu", 0) THEN
+        RAISE EXCEPTION 'Hóa đơn chưa đạt giá trị tối thiểu của voucher';
+    END IF;
+
+    SELECT COUNT(*)
+    INTO v_so_hoa_don_thanh_cong
+    FROM public."HoaDon"
+    WHERE "MaNguoiDung" = NEW."MaNguoiDung"
+      AND "TrangThai" = 'DaThanhToan'
+      AND "MaHoaDon" <> COALESCE(NEW."MaHoaDon", 0);
+
+    IF v_voucher."ChiApDungKhachMoi" AND v_so_hoa_don_thanh_cong > 0 THEN
+        RAISE EXCEPTION 'Voucher chỉ dành cho khách hàng mới';
+    END IF;
+
+    SELECT COUNT(*)
+    INTO v_so_lan_da_dung
+    FROM public."HoaDon"
+    WHERE "MaNguoiDung" = NEW."MaNguoiDung"
+      AND "MaVoucher" = NEW."MaVoucher"
+      AND "TrangThai" = 'DaThanhToan'
+      AND "MaHoaDon" <> COALESCE(NEW."MaHoaDon", 0);
+
+    IF COALESCE(v_voucher."SoLanDungToiDaMoiNguoi", 0) > 0
+       AND v_so_lan_da_dung >= v_voucher."SoLanDungToiDaMoiNguoi" THEN
+        RAISE EXCEPTION 'Người dùng đã sử dụng hết số lần cho phép';
+    END IF;
+
+    IF TG_OP = 'UPDATE' THEN
+        SELECT
+            COALESCE(SUM(
+                COALESCE("SoLuongNguoiLon", 0)
+                + COALESCE("SoLuongTreEm", 0)
+                + COALESCE("SoLuongNguoiCaoTuoi", 0)
+            ), 0),
+            COALESCE(SUM("ThanhTien"), 0)
+        INTO v_tong_so_ve, v_tong_chi_tiet
+        FROM public."ChiTietHoaDon"
+        WHERE "MaHoaDon" = NEW."MaHoaDon";
+
+        IF v_tong_so_ve <= 0 OR v_tong_chi_tiet <= 0 THEN
+            RAISE EXCEPTION 'Hóa đơn chưa có chi tiết vé hợp lệ';
+        END IF;
+        IF ABS(v_tong_chi_tiet - COALESCE(NEW."TongTien", 0)) > 0.01 THEN
+            RAISE EXCEPTION 'Tổng tiền hóa đơn không khớp chi tiết vé';
+        END IF;
+        IF v_tong_so_ve < GREATEST(1, COALESCE(v_voucher."SoLuongVeToiThieu", 1)) THEN
+            RAISE EXCEPTION 'Hóa đơn chưa đạt số lượng vé tối thiểu của voucher';
+        END IF;
+
+        IF v_voucher."MaVeApDung" IS NOT NULL THEN
+            SELECT COALESCE(SUM("ThanhTien"), 0)
+            INTO v_tam_tinh_ap_dung
+            FROM public."ChiTietHoaDon"
+            WHERE "MaHoaDon" = NEW."MaHoaDon"
+              AND "MaVe" = v_voucher."MaVeApDung";
+        ELSIF v_voucher."MaLoaiVeApDung" IS NOT NULL THEN
+            SELECT COALESCE(SUM(chi_tiet."ThanhTien"), 0)
+            INTO v_tam_tinh_ap_dung
+            FROM public."ChiTietHoaDon" AS chi_tiet
+            JOIN public."Ve" AS ve ON ve."MaVe" = chi_tiet."MaVe"
+            WHERE chi_tiet."MaHoaDon" = NEW."MaHoaDon"
+              AND ve."MaLoaiVe" = v_voucher."MaLoaiVeApDung";
+        ELSE
+            v_tam_tinh_ap_dung := v_tong_chi_tiet;
+        END IF;
+
+        IF v_tam_tinh_ap_dung <= 0 THEN
+            RAISE EXCEPTION 'Hóa đơn không có vé thuộc phạm vi áp dụng';
+        END IF;
+    ELSE
+        v_tam_tinh_ap_dung := COALESCE(NEW."TongTien", 0);
+    END IF;
+
+    v_tien_giam_cho_phep := CASE
+        WHEN v_voucher."KieuGiamGia" = 'PhanTram'
+            THEN v_tam_tinh_ap_dung * COALESCE(v_voucher."GiaTriGiam", 0) / 100
+        ELSE COALESCE(v_voucher."GiaTriGiam", 0)
+    END;
+    IF COALESCE(v_voucher."GiamToiDa", 0) > 0 THEN
+        v_tien_giam_cho_phep := LEAST(v_tien_giam_cho_phep, v_voucher."GiamToiDa");
+    END IF;
+    v_tien_giam_cho_phep := LEAST(
+        v_tien_giam_cho_phep,
+        v_tam_tinh_ap_dung,
+        COALESCE(NEW."TongTien", 0)
+    );
+
+    IF COALESCE(NEW."TienGiam", 0) < 0
+       OR (TG_OP = 'UPDATE' AND ABS(COALESCE(NEW."TienGiam", 0) - v_tien_giam_cho_phep) > 0.01)
+       OR (TG_OP = 'INSERT' AND COALESCE(NEW."TienGiam", 0) > v_tien_giam_cho_phep + 0.01) THEN
+        RAISE EXCEPTION 'Số tiền giảm của voucher không hợp lệ';
+    END IF;
+
+    UPDATE public."Voucher"
+    SET "SoLuong" = "SoLuong" - 1
+    WHERE "MaVoucher" = NEW."MaVoucher"
+      AND "SoLuong" > 0;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Voucher đã hết lượt sử dụng';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION private.dieu_chinh_so_luong_voucher_hoa_don() FROM PUBLIC;
+REVOKE ALL ON FUNCTION private.dieu_chinh_so_luong_voucher_hoa_don() FROM anon, authenticated;
+
+DROP TRIGGER IF EXISTS "trg_HoaDon_DieuChinhSoLuongVoucher" ON public."HoaDon";
+CREATE TRIGGER "trg_HoaDon_DieuChinhSoLuongVoucher"
+BEFORE INSERT OR UPDATE OR DELETE ON public."HoaDon"
+FOR EACH ROW
+EXECUTE FUNCTION private.dieu_chinh_so_luong_voucher_hoa_don();
+
+CREATE OR REPLACE FUNCTION private.tinh_tien_giam_voucher_sepay(
+    p_ma_hoa_don BIGINT,
+    p_ma_nguoi_dung BIGINT,
+    p_ma_voucher BIGINT,
+    p_tong_tien NUMERIC
+)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+    v_voucher public."Voucher"%ROWTYPE;
+    v_tam_tinh_ap_dung NUMERIC(18,2);
+    v_tien_giam NUMERIC(18,2);
+    v_tong_so_ve INT;
+    v_so_hoa_don_thanh_cong INT;
+    v_so_lan_da_dung INT;
+BEGIN
+    IF p_ma_voucher IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    SELECT *
+    INTO v_voucher
+    FROM public."Voucher"
+    WHERE "MaVoucher" = p_ma_voucher
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Voucher không tồn tại';
+    END IF;
+    IF v_voucher."TrangThai" <> 'HoatDong' THEN
+        RAISE EXCEPTION 'Voucher không còn hoạt động';
+    END IF;
+    IF CURRENT_DATE < v_voucher."NgayBatDau" THEN
+        RAISE EXCEPTION 'Voucher chưa đến ngày áp dụng';
+    END IF;
+    IF CURRENT_DATE > v_voucher."NgayKetThuc" THEN
+        RAISE EXCEPTION 'Voucher đã hết hạn';
+    END IF;
+    IF COALESCE(v_voucher."SoLuong", 0) <= 0 THEN
+        RAISE EXCEPTION 'Voucher đã hết lượt sử dụng';
+    END IF;
+    IF p_tong_tien < COALESCE(v_voucher."DonToiThieu", 0) THEN
+        RAISE EXCEPTION 'Đơn hàng chưa đạt giá trị tối thiểu của voucher';
+    END IF;
+
+    SELECT COALESCE(SUM(
+        COALESCE("SoLuongNguoiLon", 0)
+        + COALESCE("SoLuongTreEm", 0)
+        + COALESCE("SoLuongNguoiCaoTuoi", 0)
+    ), 0)
+    INTO v_tong_so_ve
+    FROM public."ChiTietThanhToanTam"
+    WHERE "MaHoaDon" = p_ma_hoa_don;
+
+    IF v_tong_so_ve < GREATEST(1, COALESCE(v_voucher."SoLuongVeToiThieu", 1)) THEN
+        RAISE EXCEPTION 'Đơn hàng chưa đạt số lượng vé tối thiểu của voucher';
+    END IF;
+
+    SELECT COUNT(*)
+    INTO v_so_hoa_don_thanh_cong
+    FROM public."HoaDon"
+    WHERE "MaNguoiDung" = p_ma_nguoi_dung
+      AND "TrangThai" = 'DaThanhToan';
+
+    IF v_voucher."ChiApDungKhachMoi" AND v_so_hoa_don_thanh_cong > 0 THEN
+        RAISE EXCEPTION 'Voucher chỉ dành cho khách hàng mới';
+    END IF;
+
+    SELECT COUNT(*)
+    INTO v_so_lan_da_dung
+    FROM public."HoaDon"
+    WHERE "MaNguoiDung" = p_ma_nguoi_dung
+      AND "MaVoucher" = p_ma_voucher
+      AND "TrangThai" = 'DaThanhToan';
+
+    IF COALESCE(v_voucher."SoLanDungToiDaMoiNguoi", 0) > 0
+       AND v_so_lan_da_dung >= v_voucher."SoLanDungToiDaMoiNguoi" THEN
+        RAISE EXCEPTION 'Người dùng đã sử dụng hết số lần cho phép';
+    END IF;
+
+    IF v_voucher."MaVeApDung" IS NOT NULL THEN
+        SELECT COALESCE(SUM("ThanhTien"), 0)
+        INTO v_tam_tinh_ap_dung
+        FROM public."ChiTietThanhToanTam"
+        WHERE "MaHoaDon" = p_ma_hoa_don
+          AND "MaVe" = v_voucher."MaVeApDung";
+    ELSIF v_voucher."MaLoaiVeApDung" IS NOT NULL THEN
+        SELECT COALESCE(SUM(chi_tiet."ThanhTien"), 0)
+        INTO v_tam_tinh_ap_dung
+        FROM public."ChiTietThanhToanTam" AS chi_tiet
+        JOIN public."Ve" AS ve ON ve."MaVe" = chi_tiet."MaVe"
+        WHERE chi_tiet."MaHoaDon" = p_ma_hoa_don
+          AND ve."MaLoaiVe" = v_voucher."MaLoaiVeApDung";
+    ELSE
+        v_tam_tinh_ap_dung := p_tong_tien;
+    END IF;
+
+    IF v_tam_tinh_ap_dung <= 0 THEN
+        RAISE EXCEPTION 'Giỏ hàng không có vé thuộc phạm vi áp dụng';
+    END IF;
+
+    v_tien_giam := CASE
+        WHEN v_voucher."KieuGiamGia" = 'PhanTram'
+            THEN v_tam_tinh_ap_dung * COALESCE(v_voucher."GiaTriGiam", 0) / 100
+        ELSE COALESCE(v_voucher."GiaTriGiam", 0)
+    END;
+    IF COALESCE(v_voucher."GiamToiDa", 0) > 0 THEN
+        v_tien_giam := LEAST(v_tien_giam, v_voucher."GiamToiDa");
+    END IF;
+    RETURN GREATEST(0, LEAST(v_tien_giam, v_tam_tinh_ap_dung, p_tong_tien));
+END;
+$$;
+
+REVOKE ALL ON FUNCTION private.tinh_tien_giam_voucher_sepay(BIGINT, BIGINT, BIGINT, NUMERIC) FROM PUBLIC;
+REVOKE ALL ON FUNCTION private.tinh_tien_giam_voucher_sepay(BIGINT, BIGINT, BIGINT, NUMERIC) FROM anon, authenticated;
+GRANT EXECUTE ON FUNCTION private.tinh_tien_giam_voucher_sepay(BIGINT, BIGINT, BIGINT, NUMERIC) TO service_role;
+
 -- =========================================================
 -- Hàm hoàn tất thanh toán SePay
 -- Chỉ webhook dùng hàm này sau khi ngân hàng xác nhận nhận tiền.
@@ -514,6 +865,7 @@ DECLARE
     v_so_luong_da_ban INT;
     v_so_luong_mua INT;
     v_da_co_hoa_don BOOLEAN;
+    v_tien_giam NUMERIC(18,2) := 0;
 BEGIN
     SELECT EXISTS (
         SELECT 1
@@ -539,8 +891,30 @@ BEGIN
         RETURN;
     END IF;
 
-    v_so_tien_can_tra := GREATEST(0, COALESCE(v_thanh_toan_tam."TongTien", 0) - COALESCE(v_thanh_toan_tam."TienGiam", 0));
-    IF p_so_tien_nhan IS NOT NULL AND p_so_tien_nhan > 0 AND p_so_tien_nhan < v_so_tien_can_tra THEN
+    BEGIN
+        v_tien_giam := private.tinh_tien_giam_voucher_sepay(
+            p_ma_hoa_don,
+            v_thanh_toan_tam."MaNguoiDung",
+            v_thanh_toan_tam."MaVoucher",
+            COALESCE(v_thanh_toan_tam."TongTien", 0)
+        );
+    EXCEPTION WHEN OTHERS THEN
+        UPDATE "ThanhToanTam"
+        SET "TrangThai" = 'LoiThanhToan',
+            "ThongBaoLoi" = SQLERRM
+        WHERE "MaHoaDon" = p_ma_hoa_don;
+
+        RETURN QUERY SELECT false, p_ma_hoa_don, SQLERRM;
+        RETURN;
+    END;
+
+    v_thanh_toan_tam."TienGiam" := v_tien_giam;
+    UPDATE "ThanhToanTam"
+    SET "TienGiam" = v_tien_giam
+    WHERE "MaHoaDon" = p_ma_hoa_don;
+
+    v_so_tien_can_tra := GREATEST(0, COALESCE(v_thanh_toan_tam."TongTien", 0) - v_tien_giam);
+    IF p_so_tien_nhan IS NOT NULL AND p_so_tien_nhan < v_so_tien_can_tra THEN
         UPDATE "ThanhToanTam"
         SET "TrangThai" = 'LoiThanhToan',
             "ThongBaoLoi" = 'Số tiền chuyển khoản chưa đủ'
@@ -586,13 +960,6 @@ BEGIN
         END IF;
     END LOOP;
 
-    IF v_thanh_toan_tam."MaVoucher" IS NOT NULL THEN
-        UPDATE "Voucher"
-        SET "SoLuong" = GREATEST(0, COALESCE("SoLuong", 0) - 1)
-        WHERE "MaVoucher" = v_thanh_toan_tam."MaVoucher"
-          AND COALESCE("SoLuong", 0) > 0;
-    END IF;
-
     INSERT INTO "HoaDon" (
         "MaHoaDon",
         "MaNguoiDung",
@@ -610,7 +977,7 @@ BEGIN
         v_thanh_toan_tam."MaVoucher",
         v_thanh_toan_tam."TienGiam",
         v_thanh_toan_tam."ThanhToan",
-        'DaThanhToan',
+        'DangXuLy',
         v_thanh_toan_tam."NoiDungChuyenKhoan"
     );
 
@@ -638,6 +1005,10 @@ BEGIN
         "DonGiaNguoiCaoTuoi",
         "ThanhTien"
     FROM "ChiTietThanhToanTam"
+    WHERE "MaHoaDon" = p_ma_hoa_don;
+
+    UPDATE "HoaDon"
+    SET "TrangThai" = 'DaThanhToan'
     WHERE "MaHoaDon" = p_ma_hoa_don;
 
     DELETE FROM "ChiTietGioHang"

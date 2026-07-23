@@ -45,13 +45,24 @@ public class HoaDonDAO {
     public void layTheoMa(int maHoaDon, ApiCallback<HoaDon> callback) {
         Map<String, String> filter = new HashMap<>();
         filter.put("MaHoaDon", "eq." + maHoaDon);
-        filter.put("select", "*");
+        filter.put("select", "*,NguoiDung(HoTen)");
         filter.put("limit", "1");
 
         apiService.timHoaDon(filter).enqueue(new Callback<List<HoaDon>>() {
             @Override
             public void onResponse(Call<List<HoaDon>> call, Response<List<HoaDon>> response) {
-                xuLyMotHoaDon(response, callback, "Không thể tải trạng thái thanh toán");
+                if (!response.isSuccessful()) {
+                    callback.onError("Không thể tải hóa đơn");
+                    return;
+                }
+
+                List<HoaDon> danhSachHoaDon = response.body();
+                if (danhSachHoaDon == null || danhSachHoaDon.isEmpty()) {
+                    callback.onError("Hóa đơn không tồn tại");
+                    return;
+                }
+
+                callback.onSuccess(danhSachHoaDon.get(0));
             }
 
             @Override
@@ -81,6 +92,24 @@ public class HoaDonDAO {
 
             @Override
             public void onFailure(Call<List<HoaDon>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+
+    public void xoaHoaDon(int maHoaDon, ApiCallback<Boolean> callback) {
+        apiService.xoaHoaDon("eq." + maHoaDon).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    callback.onError("Không thể hoàn tác hóa đơn chưa hoàn chỉnh");
+                    return;
+                }
+                callback.onSuccess(true);
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
                 callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });

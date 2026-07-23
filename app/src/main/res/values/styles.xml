@@ -116,6 +116,14 @@
         <item name="android:letterSpacing">0.08</item>
     </style>
 
+    <style name="App.Text.FieldLabel">
+        <item name="android:textSize">@dimen/text_body_sm</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/mauChuPhu</item>
+        <item name="android:paddingStart">@dimen/space_xs</item>
+        <item name="android:paddingEnd">@dimen/space_xs</item>
+    </style>
+
     <style name="App.Text.SectionTitle">
         <item name="android:textSize">@dimen/text_title</item>
         <item name="android:textStyle">bold</item>

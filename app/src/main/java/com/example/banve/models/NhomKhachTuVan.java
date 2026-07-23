@@ -1,0 +1,40 @@
+package com.example.banve.models;
+
+public class NhomKhachTuVan {
+    private int soLuongNguoiLon;
+    private int soLuongTreEm;
+    private int soLuongNguoiCaoTuoi;
+    private String ngaySuDung;
+
+    public int getSoLuongNguoiLon() {
+        return soLuongNguoiLon;
+    }
+
+    public void setSoLuongNguoiLon(int soLuongNguoiLon) {
+        this.soLuongNguoiLon = soLuongNguoiLon;
+    }
+
+    public int getSoLuongTreEm() {
+        return soLuongTreEm;
+    }
+
+    public void setSoLuongTreEm(int soLuongTreEm) {
+        this.soLuongTreEm = soLuongTreEm;
+    }
+
+    public int getSoLuongNguoiCaoTuoi() {
+        return soLuongNguoiCaoTuoi;
+    }
+
+    public void setSoLuongNguoiCaoTuoi(int soLuongNguoiCaoTuoi) {
+        this.soLuongNguoiCaoTuoi = soLuongNguoiCaoTuoi;
+    }
+
+    public String getNgaySuDung() {
+        return ngaySuDung;
+    }
+
+    public void setNgaySuDung(String ngaySuDung) {
+        this.ngaySuDung = ngaySuDung;
+    }
+}

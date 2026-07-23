@@ -1,7 +1,12 @@
 package com.example.banve.controllers;
 
 import com.example.banve.dao.LichSuChatDAO;
+import com.example.banve.models.DeXuatThemGioHang;
+import com.example.banve.models.KetQuaChatAI;
+import com.example.banve.models.KetQuaTuVanVe;
 import com.example.banve.models.LichSuChat;
+import com.example.banve.models.LuaChonVeTuVan;
+import com.example.banve.models.NhomKhachTuVan;
 import com.example.banve.network.ApiCallback;
 import com.example.banve.utils.Session;
 
@@ -14,11 +19,56 @@ public class ChatAIController {
     private final AIContextController aiContextController;
     private final AIServiceController aiServiceController;
     private final LichSuChatDAO lichSuChatDAO;
+    private final TuVanVeController tuVanVeController;
 
     public ChatAIController() {
         aiContextController = new AIContextController();
         aiServiceController = new AIServiceController();
         lichSuChatDAO = new LichSuChatDAO();
+        tuVanVeController = new TuVanVeController();
+    }
+
+    public void tuVanVeTheoNhom(NhomKhachTuVan nhomKhach, ApiCallback<KetQuaChatAI> callback) {
+        if (!Session.dangDangNhap() || Session.nguoiDungHienTai == null) {
+            callback.onError("Phiên đăng nhập không hợp lệ, vui lòng đăng nhập lại");
+            return;
+        }
+
+        tuVanVeController.tuVan(nhomKhach, new ApiCallback<KetQuaTuVanVe>() {
+            @Override
+            public void onSuccess(KetQuaTuVanVe ketQuaTuVan) {
+                String cauHoi = taoCauHoiTuVanNhom(nhomKhach);
+                if (ketQuaTuVan.getDeXuatChinh() == null) {
+                    KetQuaChatAI ketQuaChat = taoKetQuaChat(ketQuaTuVan.getNoiDungDuPhong(), null);
+                    luuLichSuTuVan(cauHoi, ketQuaChat, callback);
+                    return;
+                }
+
+                String prompt = "Bạn chỉ diễn giải đề xuất đã được Java tính sẵn thành câu trả lời tự nhiên bằng tiếng Việt. "
+                        + "Không đổi vé đề xuất, không đổi giá, không đổi số lượng, không thêm mã vé hoặc dữ liệu mới.";
+                aiServiceController.guiNoiDung(prompt, taoDuLieuTuVanGuiAI(ketQuaTuVan), new ApiCallback<String>() {
+                    @Override
+                    public void onSuccess(String traLoi) {
+                        KetQuaChatAI ketQuaChat = taoKetQuaChat(traLoi, taoDeXuatThemGio(ketQuaTuVan.getDeXuatChinh()));
+                        luuLichSuTuVan(cauHoi, ketQuaChat, callback);
+                    }
+
+                    @Override
+                    public void onError(String thongBao) {
+                        KetQuaChatAI ketQuaChat = taoKetQuaChat(
+                                ketQuaTuVan.getNoiDungDuPhong(),
+                                taoDeXuatThemGio(ketQuaTuVan.getDeXuatChinh())
+                        );
+                        luuLichSuTuVan(cauHoi, ketQuaChat, callback);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String thongBao) {
+                callback.onError(thongBao);
+            }
+        });
     }
 
     public void guiCauHoi(String cauHoi, ApiCallback<String> callback) {
@@ -134,6 +184,66 @@ public class ChatAIController {
                 callback.onSuccess(traLoi);
             }
         });
+    }
+
+    private void luuLichSuTuVan(String cauHoi, KetQuaChatAI ketQua, ApiCallback<KetQuaChatAI> callback) {
+        LichSuChat lichSuChat = new LichSuChat();
+        lichSuChat.setMaNguoiDung(Session.nguoiDungHienTai.getMaNguoiDung());
+        lichSuChat.setCauHoi(cauHoi);
+        lichSuChat.setTraLoi(ketQua.getNoiDung());
+
+        lichSuChatDAO.themLichSu(lichSuChat, new ApiCallback<LichSuChat>() {
+            @Override
+            public void onSuccess(LichSuChat data) {
+                callback.onSuccess(ketQua);
+            }
+
+            @Override
+            public void onError(String thongBao) {
+                callback.onSuccess(ketQua);
+            }
+        });
+    }
+
+    private String taoCauHoiTuVanNhom(NhomKhachTuVan nhomKhach) {
+        return "Tư vấn vé cho nhóm "
+                + nhomKhach.getSoLuongNguoiLon() + " người lớn, "
+                + nhomKhach.getSoLuongTreEm() + " trẻ em, "
+                + nhomKhach.getSoLuongNguoiCaoTuoi() + " người cao tuổi, ngày "
+                + nhomKhach.getNgaySuDung();
+    }
+
+    private String taoDuLieuTuVanGuiAI(KetQuaTuVanVe ketQuaTuVan) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("KẾT QUẢ JAVA ĐÃ TÍNH VÀ CHỌN\n")
+                .append(ketQuaTuVan.getNoiDungDuPhong())
+                .append("\n\nDANH SÁCH SO SÁNH CÓ CẤU TRÚC\n");
+        for (LuaChonVeTuVan luaChon : ketQuaTuVan.getDanhSachLuaChon()) {
+            builder.append("- MaVe=").append(luaChon.getMaVe())
+                    .append(", TenVe=").append(luaChon.getTenVe())
+                    .append(", LoaiVe=").append(luaChon.getTenLoaiVe())
+                    .append(", TongTien=").append(luaChon.getTongTienDuKien())
+                    .append("\n");
+        }
+        builder.append("Đề xuất chính bắt buộc là vé đầu tiên. Chỉ viết lại cho dễ đọc.");
+        return builder.toString();
+    }
+
+    private DeXuatThemGioHang taoDeXuatThemGio(LuaChonVeTuVan luaChon) {
+        DeXuatThemGioHang deXuat = new DeXuatThemGioHang();
+        deXuat.setMaVe(luaChon.getMaVe());
+        deXuat.setNgaySuDung(luaChon.getNgaySuDung());
+        deXuat.setSoLuongNguoiLon(luaChon.getSoLuongNguoiLon());
+        deXuat.setSoLuongTreEm(luaChon.getSoLuongTreEm());
+        deXuat.setSoLuongNguoiCaoTuoi(luaChon.getSoLuongNguoiCaoTuoi());
+        return deXuat;
+    }
+
+    private KetQuaChatAI taoKetQuaChat(String noiDung, DeXuatThemGioHang deXuat) {
+        KetQuaChatAI ketQua = new KetQuaChatAI();
+        ketQua.setNoiDung(noiDung);
+        ketQua.setDeXuatThemGioHang(deXuat);
+        return ketQua;
     }
 
     private String chuoi(String giaTri) {

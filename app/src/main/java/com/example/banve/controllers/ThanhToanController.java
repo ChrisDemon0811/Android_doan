@@ -11,6 +11,7 @@ import com.example.banve.models.ChiTietGioHang;
 import com.example.banve.models.ChiTietHoaDon;
 import com.example.banve.models.ChiTietThanhToanTam;
 import com.example.banve.models.HoaDon;
+import com.example.banve.models.KetQuaKiemTraVoucher;
 import com.example.banve.models.MucGioHang;
 import com.example.banve.models.ThanhToanTam;
 import com.example.banve.models.Ve;
@@ -33,6 +34,7 @@ public class ThanhToanController {
     private final ChiTietHoaDonDAO chiTietHoaDonDAO;
     private final ChiTietThanhToanTamDAO chiTietThanhToanTamDAO;
     private final ChiTietGioHangDAO chiTietGioHangDAO;
+    private final VoucherApDungController voucherApDungController;
 
     public ThanhToanController() {
         veDAO = new VeDAO();
@@ -42,21 +44,7 @@ public class ThanhToanController {
         chiTietHoaDonDAO = new ChiTietHoaDonDAO();
         chiTietThanhToanTamDAO = new ChiTietThanhToanTamDAO();
         chiTietGioHangDAO = new ChiTietGioHangDAO();
-    }
-
-    public double apDungVoucher(Voucher voucher, double tongTien) {
-        if (voucher == null || tongTien <= 0) {
-            return 0;
-        }
-
-        double tienGiam;
-        if ("PhanTram".equals(voucher.getKieuGiamGia())) {
-            tienGiam = tongTien * voucher.getGiaTriGiam() / 100;
-        } else {
-            tienGiam = voucher.getGiaTriGiam();
-        }
-
-        return Math.min(tienGiam, tongTien);
+        voucherApDungController = new VoucherApDungController();
     }
 
     public void hoanTatThanhToan(
@@ -72,7 +60,29 @@ public class ThanhToanController {
             return;
         }
 
-        kiemTraTonVe(danhSachMuc, callback, 0, () -> truVoucherVaTaoHoaDon(maNguoiDung, danhSachMuc, voucher, hinhThucThanhToan, callback));
+        kiemTraTonVe(danhSachMuc, callback, 0, () -> xacMinhVoucherMoiNhat(
+                maNguoiDung,
+                danhSachMuc,
+                voucher,
+                new ApiCallback<KetQuaKiemTraVoucher>() {
+                    @Override
+                    public void onSuccess(KetQuaKiemTraVoucher ketQua) {
+                        taoHoaDon(
+                                maNguoiDung,
+                                danhSachMuc,
+                                ketQua.getVoucher(),
+                                ketQua.getTienGiam(),
+                                hinhThucThanhToan,
+                                callback
+                        );
+                    }
+
+                    @Override
+                    public void onError(String thongBao) {
+                        callback.onError(thongBao);
+                    }
+                }
+        ));
     }
 
     public void taoThanhToanSePay(
@@ -86,12 +96,28 @@ public class ThanhToanController {
             callback.onError(loiDuLieu);
             return;
         }
-        if (voucher != null && voucher.getSoLuong() <= 0) {
-            callback.onError("Voucher đã hết lượt sử dụng");
-            return;
-        }
+        kiemTraTonVe(danhSachMuc, callback, 0, () -> xacMinhVoucherMoiNhat(
+                maNguoiDung,
+                danhSachMuc,
+                voucher,
+                new ApiCallback<KetQuaKiemTraVoucher>() {
+                    @Override
+                    public void onSuccess(KetQuaKiemTraVoucher ketQua) {
+                        xoaThanhToanTamCuVaTaoMoi(
+                                maNguoiDung,
+                                danhSachMuc,
+                                ketQua.getVoucher(),
+                                ketQua.getTienGiam(),
+                                callback
+                        );
+                    }
 
-        kiemTraTonVe(danhSachMuc, callback, 0, () -> xoaThanhToanTamCuVaTaoMoi(maNguoiDung, danhSachMuc, voucher, callback));
+                    @Override
+                    public void onError(String thongBao) {
+                        callback.onError(thongBao);
+                    }
+                }
+        ));
     }
 
     private String kiemTraDuLieuThanhToan(int maNguoiDung, List<MucGioHang> danhSachMuc, String hinhThucThanhToan) {
@@ -170,12 +196,13 @@ public class ThanhToanController {
             int maNguoiDung,
             List<MucGioHang> danhSachMuc,
             Voucher voucher,
+            double tienGiam,
             ApiCallback<ThanhToanTam> callback
     ) {
         thanhToanTamDAO.xoaDangChoTheoNguoiDung(maNguoiDung, new ApiCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean data) {
-                taoThanhToanTamMoi(maNguoiDung, danhSachMuc, voucher, callback);
+                taoThanhToanTamMoi(maNguoiDung, danhSachMuc, voucher, tienGiam, callback);
             }
 
             @Override
@@ -189,10 +216,10 @@ public class ThanhToanController {
             int maNguoiDung,
             List<MucGioHang> danhSachMuc,
             Voucher voucher,
+            double tienGiam,
             ApiCallback<ThanhToanTam> callback
     ) {
         double tongTien = tinhTongTien(danhSachMuc);
-        double tienGiam = apDungVoucher(voucher, tongTien);
 
         ThanhToanTam thanhToanTam = new ThanhToanTam();
         thanhToanTam.setMaNguoiDung(maNguoiDung);
@@ -269,27 +296,44 @@ public class ThanhToanController {
         });
     }
 
-    private void truVoucherVaTaoHoaDon(
+    private void xacMinhVoucherMoiNhat(
             int maNguoiDung,
             List<MucGioHang> danhSachMuc,
             Voucher voucher,
-            String hinhThucThanhToan,
-            ApiCallback<HoaDon> callback
+            ApiCallback<KetQuaKiemTraVoucher> callback
     ) {
         if (voucher == null) {
-            taoHoaDon(maNguoiDung, danhSachMuc, null, hinhThucThanhToan, callback);
+            KetQuaKiemTraVoucher ketQua = new KetQuaKiemTraVoucher();
+            ketQua.setHopLe(true);
+            ketQua.setTienGiam(0);
+            callback.onSuccess(ketQua);
             return;
         }
 
-        if (voucher.getSoLuong() <= 0) {
-            callback.onError("Voucher đã hết lượt sử dụng");
-            return;
-        }
-
-        voucherDAO.capNhatSoLuong(voucher.getMaVoucher(), voucher.getSoLuong() - 1, new ApiCallback<Voucher>() {
+        voucherDAO.layTheoMa(voucher.getMaVoucher(), new ApiCallback<Voucher>() {
             @Override
-            public void onSuccess(Voucher data) {
-                taoHoaDon(maNguoiDung, danhSachMuc, data, hinhThucThanhToan, callback);
+            public void onSuccess(Voucher voucherMoiNhat) {
+                hoaDonDAO.layDanhSachDaThanhToan(maNguoiDung, new ApiCallback<List<HoaDon>>() {
+                    @Override
+                    public void onSuccess(List<HoaDon> danhSachHoaDon) {
+                        KetQuaKiemTraVoucher ketQua = voucherApDungController.kiemTra(
+                                voucherMoiNhat,
+                                danhSachMuc,
+                                maNguoiDung,
+                                danhSachHoaDon
+                        );
+                        if (!ketQua.isHopLe()) {
+                            callback.onError(ketQua.getLyDo());
+                            return;
+                        }
+                        callback.onSuccess(ketQua);
+                    }
+
+                    @Override
+                    public void onError(String thongBao) {
+                        callback.onError("Không thể kiểm tra lịch sử sử dụng voucher");
+                    }
+                });
             }
 
             @Override
@@ -303,11 +347,11 @@ public class ThanhToanController {
             int maNguoiDung,
             List<MucGioHang> danhSachMuc,
             Voucher voucher,
+            double tienGiam,
             String hinhThucThanhToan,
             ApiCallback<HoaDon> callback
     ) {
         double tongTien = tinhTongTien(danhSachMuc);
-        double tienGiam = apDungVoucher(voucher, tongTien);
 
         HoaDon hoaDon = new HoaDon();
         hoaDon.setMaNguoiDung(maNguoiDung);
@@ -315,7 +359,7 @@ public class ThanhToanController {
         hoaDon.setTienGiam(tienGiam);
         hoaDon.setMaVoucher(voucher == null ? null : voucher.getMaVoucher());
         hoaDon.setThanhToan(hinhThucThanhToan);
-        hoaDon.setTrangThai("DaThanhToan");
+        hoaDon.setTrangThai("DangXuLy");
 
         hoaDonDAO.taoHoaDon(hoaDon, new ApiCallback<HoaDon>() {
             @Override
@@ -330,6 +374,20 @@ public class ThanhToanController {
         });
     }
 
+    private void hoanTacHoaDonChuaHoanChinh(HoaDon hoaDon, String thongBaoGoc, ApiCallback<HoaDon> callback) {
+        hoaDonDAO.xoaHoaDon(hoaDon.getMaHoaDon(), new ApiCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean data) {
+                callback.onError(thongBaoGoc);
+            }
+
+            @Override
+            public void onError(String thongBao) {
+                callback.onError(thongBaoGoc + ". Hóa đơn chưa hoàn chỉnh cần được quản lý kiểm tra.");
+            }
+        });
+    }
+
     private void taoChiTietHoaDon(
             HoaDon hoaDon,
             List<MucGioHang> danhSachMuc,
@@ -337,7 +395,7 @@ public class ThanhToanController {
             int viTri
     ) {
         if (viTri >= danhSachMuc.size()) {
-            xoaGioHangSauThanhToan(hoaDon, danhSachMuc, callback, 0);
+            xacNhanHoaDonDaThanhToan(hoaDon, danhSachMuc, callback);
             return;
         }
 
@@ -350,7 +408,25 @@ public class ThanhToanController {
 
             @Override
             public void onError(String thongBao) {
-                callback.onError(thongBao);
+                hoanTacHoaDonChuaHoanChinh(hoaDon, thongBao, callback);
+            }
+        });
+    }
+
+    private void xacNhanHoaDonDaThanhToan(
+            HoaDon hoaDon,
+            List<MucGioHang> danhSachMuc,
+            ApiCallback<HoaDon> callback
+    ) {
+        hoaDonDAO.capNhatTrangThai(hoaDon.getMaHoaDon(), "DaThanhToan", new ApiCallback<HoaDon>() {
+            @Override
+            public void onSuccess(HoaDon data) {
+                xoaGioHangSauThanhToan(data, danhSachMuc, callback, 0);
+            }
+
+            @Override
+            public void onError(String thongBao) {
+                hoanTacHoaDonChuaHoanChinh(hoaDon, thongBao, callback);
             }
         });
     }
@@ -380,7 +456,7 @@ public class ThanhToanController {
 
             @Override
             public void onError(String thongBao) {
-                callback.onError(thongBao);
+                xoaGioHangSauThanhToan(hoaDon, danhSachMuc, callback, viTri + 1);
             }
         });
     }

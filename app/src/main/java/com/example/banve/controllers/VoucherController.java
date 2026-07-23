@@ -20,6 +20,18 @@ public class VoucherController {
         voucherDAO.layDanhSachVoucher(callback);
     }
 
+    public void layDanhSachVoucherChoThanhToan(ApiCallback<List<Voucher>> callback) {
+        voucherDAO.layDanhSachVoucherChoThanhToan(callback);
+    }
+
+    public void layTheoMa(int maVoucher, ApiCallback<Voucher> callback) {
+        if (maVoucher <= 0) {
+            callback.onError("Voucher không hợp lệ");
+            return;
+        }
+        voucherDAO.layTheoMa(maVoucher, callback);
+    }
+
     public void themVoucher(Voucher voucher, ApiCallback<Voucher> callback) {
         String loi = kiemTraVoucher(voucher, false);
         if (loi != null) {
@@ -129,6 +141,48 @@ public class VoucherController {
         if (voucher.getSoLuong() < 0) {
             return "Số lượng không được âm";
         }
+        if (voucher.getDonToiThieu() < 0) {
+            return "Đơn tối thiểu không được âm";
+        }
+        if (voucher.getGiamToiDa() < 0) {
+            return "Giảm tối đa không được âm";
+        }
+        if (voucher.getSoLuongVeToiThieu() < 1) {
+            return "Số lượng vé tối thiểu phải từ 1 trở lên";
+        }
+        if (voucher.getSoLanDungToiDaMoiNguoi() < 0) {
+            return "Số lần dùng tối đa mỗi người không được âm";
+        }
+        if (voucher.getMaLoaiVeApDung() != null && voucher.getMaVeApDung() != null) {
+            return "Chỉ được chọn loại vé hoặc vé cụ thể, không được chọn đồng thời";
+        }
+        if (voucher.getMaLoaiVeApDung() != null && voucher.getMaLoaiVeApDung() <= 0) {
+            return "Loại vé áp dụng không hợp lệ";
+        }
+        if (voucher.getMaVeApDung() != null && voucher.getMaVeApDung() <= 0) {
+            return "Vé áp dụng không hợp lệ";
+        }
+        String phamViApDung = layPhamViApDung(voucher);
+        if ("LoaiVe".equals(phamViApDung) && voucher.getMaLoaiVeApDung() == null) {
+            return "Vui lòng chọn loại vé áp dụng";
+        }
+        if ("Ve".equals(phamViApDung) && voucher.getMaVeApDung() == null) {
+            return "Vui lòng chọn vé áp dụng";
+        }
+        if ("TatCa".equals(phamViApDung)
+                && (voucher.getMaLoaiVeApDung() != null || voucher.getMaVeApDung() != null)) {
+            return "Phạm vi tất cả vé không được kèm vé hoặc loại vé cụ thể";
+        }
+        if (!"TatCa".equals(phamViApDung)
+                && !"LoaiVe".equals(phamViApDung)
+                && !"Ve".equals(phamViApDung)) {
+            return "Phạm vi áp dụng không hợp lệ";
+        }
+        if (voucher.getMucTieu() != null
+                && !voucher.getMucTieu().isEmpty()
+                && voucher.getMucTieu().trim().isEmpty()) {
+            return "Mục tiêu voucher không được chỉ chứa khoảng trắng";
+        }
         if (!ngayHopLe(voucher.getNgayBatDau()) || !ngayHopLe(voucher.getNgayKetThuc())) {
             return "Ngày không hợp lệ";
         }
@@ -141,6 +195,8 @@ public class VoucherController {
     private Voucher chuanHoaVoucher(Voucher voucher) {
         voucher.setMaGiamGia(voucher.getMaGiamGia().trim().toUpperCase(Locale.ROOT));
         voucher.setTenVoucher(voucher.getTenVoucher().trim());
+        voucher.setMucTieu(chuanHoaChuoi(voucher.getMucTieu()));
+        voucher.setMoTaDieuKien(chuanHoaChuoi(voucher.getMoTaDieuKien()));
         if (rong(voucher.getTrangThai())) {
             voucher.setTrangThai("HoatDong");
         }
@@ -163,5 +219,22 @@ public class VoucherController {
 
     private boolean rong(String chuoi) {
         return chuoi == null || chuoi.trim().isEmpty();
+    }
+
+    private String chuanHoaChuoi(String chuoi) {
+        return chuoi == null ? "" : chuoi.trim();
+    }
+
+    private String layPhamViApDung(Voucher voucher) {
+        if (voucher.getPhamViApDung() != null && !voucher.getPhamViApDung().trim().isEmpty()) {
+            return voucher.getPhamViApDung().trim();
+        }
+        if (voucher.getMaVeApDung() != null) {
+            return "Ve";
+        }
+        if (voucher.getMaLoaiVeApDung() != null) {
+            return "LoaiVe";
+        }
+        return "TatCa";
     }
 }

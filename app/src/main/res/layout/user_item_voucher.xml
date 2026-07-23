@@ -8,39 +8,72 @@
     android:background="@drawable/bg_card_accent"
     android:elevation="@dimen/elevation_sm"
     android:foreground="?attr/selectableItemBackground"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="@dimen/card_padding">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/lblTenVoucher"
-            android:layout_width="match_parent"
+            style="@style/App.Text.Title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Voucher"
-            android:maxLines="1"
+            android:layout_weight="1"
             android:ellipsize="end"
-            style="@style/App.Text.Title" />
+            android:maxLines="2"
+            android:text="Voucher" />
 
         <TextView
-            android:id="@+id/lblMoTaGiam"
-            android:layout_width="match_parent"
+            android:id="@+id/lblTrangThaiVoucher"
+            style="@style/App.Badge.Success"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_xxs"
-            android:text="Giảm 0%"
-            style="@style/App.Text.Price" />
+            android:layout_marginStart="@dimen/space_sm"
+            android:text="Đủ điều kiện" />
     </LinearLayout>
 
-    <ImageView
-        style="@style/App.Badge.Warning"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/lblMaGiamGia"
+        style="@style/App.Text.Label"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="Voucher"
-        android:src="@drawable/ic_bv_voucher"
-        android:tint="@color/mauCamChinh" />
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Mã: VOUCHER" />
+
+    <TextView
+        android:id="@+id/lblMoTaGiam"
+        style="@style/App.Text.Price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Giảm 0%" />
+
+    <TextView
+        android:id="@+id/lblDieuKienVoucher"
+        style="@style/App.Text.BodySm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="Điều kiện áp dụng" />
+
+    <TextView
+        android:id="@+id/lblTienGiamThucTe"
+        style="@style/App.Text.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="Giảm thực tế: 0 VNĐ"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lblLyDoVoucher"
+        style="@style/App.Text.BodySm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Lý do" />
 </LinearLayout>

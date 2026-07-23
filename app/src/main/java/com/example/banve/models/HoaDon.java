@@ -8,6 +8,9 @@ public class HoaDon {
     @SerializedName("MaHoaDon")
     private int maHoaDon;
 
+    @SerializedName("MaXacThuc")
+    private String maXacThuc;
+
     @SerializedName("MaNguoiDung")
     private int maNguoiDung;
 
@@ -43,6 +46,14 @@ public class HoaDon {
 
     public void setMaHoaDon(int maHoaDon) {
         this.maHoaDon = maHoaDon;
+    }
+
+    public String getMaXacThuc() {
+        return maXacThuc;
+    }
+
+    public void setMaXacThuc(String maXacThuc) {
+        this.maXacThuc = maXacThuc;
     }
 
     public int getMaNguoiDung() {
