@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.example.banve.R;
 import com.example.banve.activities.user.DangNhapActivity;
 
+import java.text.ParsePosition;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +21,26 @@ import java.util.Locale;
 
 public final class TienIch {
     private static final String DINH_DANG_NGAY = "dd/MM/yyyy";
+    private static final String DINH_DANG_NGAY_GIO = "dd/MM/yyyy HH:mm";
+    private static final String[] DINH_DANG_NGAY_NGUON = {
+            "dd/MM/yyyy",
+            "yyyy-MM-dd"
+    };
+    private static final String[] DINH_DANG_NGAY_GIO_NGUON = {
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+            "yyyy-MM-dd'T'HH:mm:ssXXX",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSSX",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+            "yyyy-MM-dd'T'HH:mm:ssX",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS",
+            "yyyy-MM-dd'T'HH:mm:ss",
+            "yyyy-MM-dd HH:mm:ss",
+            "dd/MM/yyyy HH:mm",
+            "yyyy-MM-dd",
+            "dd/MM/yyyy"
+    };
 
     private TienIch() {
     }
@@ -31,12 +52,61 @@ public final class TienIch {
         return new SimpleDateFormat(DINH_DANG_NGAY, Locale.getDefault()).format(ngay);
     }
 
+    public static String dinhDangNgay(String chuoiNgay) {
+        if (chuoiNgay == null || chuoiNgay.trim().isEmpty()) {
+            return "";
+        }
+
+        String giaTri = chuoiNgay.trim();
+        Date ngay = parseTheoDinhDang(giaTri, DINH_DANG_NGAY_NGUON);
+        if (ngay == null && giaTri.length() >= 10) {
+            ngay = parseTheoDinhDang(giaTri.substring(0, 10), DINH_DANG_NGAY_NGUON);
+        }
+        return ngay == null
+                ? giaTri
+                : new SimpleDateFormat(DINH_DANG_NGAY, Locale.getDefault()).format(ngay);
+    }
+
+    public static String dinhDangNgayGio(String chuoiNgayGio) {
+        if (chuoiNgayGio == null || chuoiNgayGio.trim().isEmpty()) {
+            return "";
+        }
+
+        String giaTri = chuoiNgayGio.trim();
+        Date ngay = parseTheoDinhDang(giaTri, DINH_DANG_NGAY_GIO_NGUON);
+        if (ngay == null) {
+            return dinhDangNgay(giaTri);
+        }
+
+        boolean coGio = giaTri.contains("T")
+                || giaTri.matches(".*\\d{2}:\\d{2}.*");
+        return new SimpleDateFormat(
+                coGio ? DINH_DANG_NGAY_GIO : DINH_DANG_NGAY,
+                Locale.getDefault()
+        ).format(ngay);
+    }
+
     public static Date parseNgay(String chuoiNgay) {
         try {
-            return new SimpleDateFormat(DINH_DANG_NGAY, Locale.getDefault()).parse(chuoiNgay);
+            SimpleDateFormat dinhDang = new SimpleDateFormat(DINH_DANG_NGAY, Locale.getDefault());
+            dinhDang.setLenient(false);
+            return dinhDang.parse(chuoiNgay);
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    private static Date parseTheoDinhDang(String giaTri, String[] danhSachDinhDang) {
+        for (String mau : danhSachDinhDang) {
+            SimpleDateFormat dinhDang = new SimpleDateFormat(mau, Locale.getDefault());
+            dinhDang.setLenient(false);
+            ParsePosition viTri = new ParsePosition(0);
+            Date ngay = dinhDang.parse(giaTri, viTri);
+            if (ngay != null && viTri.getIndex() == giaTri.length()) {
+                return ngay;
+            }
+        }
+        return null;
     }
 
     public static void hienToast(Context context, String thongBao) {

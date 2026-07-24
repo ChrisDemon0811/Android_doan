@@ -11,13 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.banve.R;
 import com.example.banve.models.ThongKeTheoNgay;
 import com.example.banve.utils.DinhDangTien;
+import com.example.banve.utils.TienIch;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ThongKeNgayAdapter extends RecyclerView.Adapter<ThongKeNgayAdapter.ThongKeNgayViewHolder> {
     private final List<ThongKeTheoNgay> danhSachThongKe = new ArrayList<>();
@@ -40,22 +37,13 @@ public class ThongKeNgayAdapter extends RecyclerView.Adapter<ThongKeNgayAdapter.
     @Override
     public void onBindViewHolder(@NonNull ThongKeNgayViewHolder holder, int position) {
         ThongKeTheoNgay thongKe = danhSachThongKe.get(position);
-        holder.lblNgay.setText("Ngày: " + dinhDangNgay(thongKe.getNgay()));
+        holder.lblNgay.setText("Ngày: " + TienIch.dinhDangNgay(thongKe.getNgay()));
         holder.lblDoanhThu.setText("Doanh thu: " + DinhDangTien.dinhDang(thongKe.getDoanhThu()));
     }
 
     @Override
     public int getItemCount() {
         return danhSachThongKe.size();
-    }
-
-    private String dinhDangNgay(String ngay) {
-        try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(ngay);
-            return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
-        } catch (ParseException e) {
-            return ngay == null ? "" : ngay;
-        }
     }
 
     static class ThongKeNgayViewHolder extends RecyclerView.ViewHolder {

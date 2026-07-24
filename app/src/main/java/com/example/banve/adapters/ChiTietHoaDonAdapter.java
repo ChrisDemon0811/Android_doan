@@ -14,6 +14,7 @@ import com.example.banve.models.ChiTietHoaDon;
 import com.example.banve.models.Ve;
 import com.example.banve.utils.BoNhoAnh;
 import com.example.banve.utils.DinhDangTien;
+import com.example.banve.utils.TienIch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,9 @@ public class ChiTietHoaDonAdapter extends RecyclerView.Adapter<ChiTietHoaDonAdap
         String tenVe = ve == null ? "Vé mã " + chiTiet.getMaVe() : ve.getTenVe();
 
         lblTenVe.setText(tenVe);
-        lblNgaySuDung.setText("Ngày sử dụng: " + giaTriRong(chiTiet.getNgaySuDung()));
+        lblNgaySuDung.setText(
+                "Ngày sử dụng: " + TienIch.dinhDangNgay(chiTiet.getNgaySuDung())
+        );
         lblSoLuong.setText(
                 "Số lượng: Người lớn " + chiTiet.getSoLuongNguoiLon()
                         + " • Trẻ em " + chiTiet.getSoLuongTreEm()
@@ -71,10 +74,6 @@ public class ChiTietHoaDonAdapter extends RecyclerView.Adapter<ChiTietHoaDonAdap
     @Override
     public int getItemCount() {
         return danhSachChiTiet.size();
-    }
-
-    private static String giaTriRong(String giaTri) {
-        return giaTri == null ? "" : giaTri;
     }
 
     static class ChiTietHoaDonViewHolder extends RecyclerView.ViewHolder {

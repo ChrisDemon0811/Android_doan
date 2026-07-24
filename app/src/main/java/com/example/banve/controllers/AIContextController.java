@@ -11,6 +11,7 @@ import com.example.banve.models.Voucher;
 import com.example.banve.network.ApiCallback;
 import com.example.banve.utils.DinhDangTien;
 import com.example.banve.utils.Session;
+import com.example.banve.utils.TienIch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,8 +163,8 @@ public class AIContextController {
                     .append(", TenVoucher: ").append(chuoi(voucher.getTenVoucher()))
                     .append(", KieuGiamGia: ").append(chuoi(voucher.getKieuGiamGia()))
                     .append(", GiaTriGiam: ").append(voucher.getGiaTriGiam())
-                    .append(", NgayBatDau: ").append(chuoi(voucher.getNgayBatDau()))
-                    .append(", NgayKetThuc: ").append(chuoi(voucher.getNgayKetThuc()))
+                    .append(", NgayBatDau: ").append(TienIch.dinhDangNgay(voucher.getNgayBatDau()))
+                    .append(", NgayKetThuc: ").append(TienIch.dinhDangNgay(voucher.getNgayKetThuc()))
                     .append(", SoLuong: ").append(voucher.getSoLuong())
                     .append(", DonToiThieu: ").append(DinhDangTien.dinhDang(voucher.getDonToiThieu()))
                     .append(", GiamToiDa: ").append(voucher.getGiamToiDa() > 0
@@ -192,7 +193,7 @@ public class AIContextController {
 
         for (HoaDon hoaDon : danhSachHoaDon) {
             builder.append("- MaHoaDon ").append(hoaDon.getMaHoaDon())
-                    .append(", NgayLap: ").append(chuoi(hoaDon.getNgayLap()))
+                    .append(", NgayLap: ").append(TienIch.dinhDangNgayGio(hoaDon.getNgayLap()))
                     .append(", TongTien: ").append(DinhDangTien.dinhDang(hoaDon.getTongTien()))
                     .append(", TienGiam: ").append(DinhDangTien.dinhDang(hoaDon.getTienGiam()))
                     .append(", TrangThai: ").append(chuoi(hoaDon.getTrangThai()));
@@ -201,7 +202,7 @@ public class AIContextController {
                 for (ChiTietHoaDon chiTiet : hoaDon.getDanhSachChiTiet()) {
                     builder.append("[")
                             .append(chiTiet.getVe() == null ? "Vé đã xóa" : chuoi(chiTiet.getVe().getTenVe()))
-                            .append(", NgaySuDung ").append(chuoi(chiTiet.getNgaySuDung()))
+                            .append(", NgaySuDung ").append(TienIch.dinhDangNgay(chiTiet.getNgaySuDung()))
                             .append(", SL ")
                             .append(chiTiet.getSoLuongNguoiLon() + chiTiet.getSoLuongTreEm() + chiTiet.getSoLuongNguoiCaoTuoi())
                             .append("] ");

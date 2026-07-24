@@ -29,6 +29,7 @@ import com.example.banve.models.NguoiDung;
 import com.example.banve.network.ApiCallback;
 import com.example.banve.utils.DinhDangTien;
 import com.example.banve.utils.HienThi;
+import com.example.banve.utils.TienIch;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -243,7 +244,7 @@ public class QuanLyHoaDonFragment extends Fragment {
 
         lblMaHoaDon.setText("Mã hóa đơn: " + hoaDon.getMaHoaDon());
         lblHoTenKhach.setText("Khách hàng: " + layHoTenKhach(hoaDon));
-        lblNgayLap.setText("Ngày lập: " + dinhDangNgayGio(hoaDon.getNgayLap()));
+        lblNgayLap.setText("Ngày lập: " + TienIch.dinhDangNgayGio(hoaDon.getNgayLap()));
         lblTongTien.setText("Tổng tiền: " + DinhDangTien.dinhDang(hoaDon.getTongTien()));
         lblTienGiam.setText("Tiền giảm: " + DinhDangTien.dinhDang(hoaDon.getTienGiam()));
         lblPhaiTra.setText("Phải trả: " + DinhDangTien.dinhDang(Math.max(0, hoaDon.getTongTien() - hoaDon.getTienGiam())));
@@ -310,14 +311,6 @@ public class QuanLyHoaDonFragment extends Fragment {
             return "Thẻ tín dụng/ghi nợ quốc tế";
         }
         return giaTri(thanhToan);
-    }
-
-    private String dinhDangNgayGio(String ngayGio) {
-        Date ngay = parseNgayGio(ngayGio);
-        if (ngay == null) {
-            return ngayGio == null ? "" : ngayGio;
-        }
-        return new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(ngay);
     }
 
     private Date parseNgayGio(String ngayGio) {

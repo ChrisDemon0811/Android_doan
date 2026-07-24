@@ -8,6 +8,7 @@ import com.example.banve.models.ThongKeTongQuan;
 import com.example.banve.network.ApiCallback;
 import com.example.banve.utils.DinhDangTien;
 import com.example.banve.utils.Session;
+import com.example.banve.utils.TienIch;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -102,7 +103,7 @@ public class AIThongKeController {
             builder.append("- Chưa có dữ liệu theo ngày.\n");
         } else {
             for (ThongKeTheoNgay item : ketQuaThongKe.getDanhSachTheoNgay()) {
-                builder.append("- ").append(item.getNgay())
+                builder.append("- ").append(TienIch.dinhDangNgay(item.getNgay()))
                         .append(": ").append(DinhDangTien.dinhDang(item.getDoanhThu()))
                         .append("\n");
             }

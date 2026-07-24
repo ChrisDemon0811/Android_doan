@@ -9,6 +9,7 @@ import com.example.banve.models.LuaChonVeTuVan;
 import com.example.banve.models.NhomKhachTuVan;
 import com.example.banve.network.ApiCallback;
 import com.example.banve.utils.Session;
+import com.example.banve.utils.TienIch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -210,7 +211,7 @@ public class ChatAIController {
                 + nhomKhach.getSoLuongNguoiLon() + " người lớn, "
                 + nhomKhach.getSoLuongTreEm() + " trẻ em, "
                 + nhomKhach.getSoLuongNguoiCaoTuoi() + " người cao tuổi, ngày "
-                + nhomKhach.getNgaySuDung();
+                + TienIch.dinhDangNgay(nhomKhach.getNgaySuDung());
     }
 
     private String taoDuLieuTuVanGuiAI(KetQuaTuVanVe ketQuaTuVan) {

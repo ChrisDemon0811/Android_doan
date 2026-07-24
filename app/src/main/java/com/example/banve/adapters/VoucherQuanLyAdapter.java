@@ -16,11 +16,9 @@ import com.example.banve.models.Ve;
 import com.example.banve.models.Voucher;
 import com.example.banve.utils.DinhDangTien;
 import com.example.banve.utils.HienThi;
+import com.example.banve.utils.TienIch;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -85,7 +83,12 @@ public class VoucherQuanLyAdapter extends RecyclerView.Adapter<VoucherQuanLyAdap
         holder.lblPhamVi.setText("Phạm vi: " + hienThiPhamVi(voucher));
         holder.lblGioiHanMoiNguoi.setText("Giới hạn mỗi người: " + hienThiGioiHanMoiNguoi(voucher));
         holder.lblDoiTuong.setText("Đối tượng: " + (voucher.isChiApDungKhachMoi() ? "Khách hàng mới" : "Tất cả khách hàng"));
-        holder.lblThoiHan.setText("Thời hạn: " + dinhDangNgay(voucher.getNgayBatDau()) + " - " + dinhDangNgay(voucher.getNgayKetThuc()));
+        holder.lblThoiHan.setText(
+                "Thời hạn: "
+                        + TienIch.dinhDangNgay(voucher.getNgayBatDau())
+                        + " - "
+                        + TienIch.dinhDangNgay(voucher.getNgayKetThuc())
+        );
         holder.lblSoLuong.setText("Số lượng còn lại: " + voucher.getSoLuong());
         capNhatTrangThai(holder, voucher);
         holder.btnSua.setOnClickListener(v -> listener.onSua(voucher));
@@ -132,18 +135,6 @@ public class VoucherQuanLyAdapter extends RecyclerView.Adapter<VoucherQuanLyAdap
             return tenLoaiVe == null ? "Loại vé mã " + voucher.getMaLoaiVeApDung() : "Loại vé " + tenLoaiVe;
         }
         return "Tất cả vé";
-    }
-
-    private String dinhDangNgay(String ngay) {
-        if (ngay == null || ngay.trim().isEmpty()) {
-            return "";
-        }
-        try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(ngay);
-            return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
-        } catch (ParseException e) {
-            return ngay;
-        }
     }
 
     static class VoucherQuanLyViewHolder extends RecyclerView.ViewHolder {

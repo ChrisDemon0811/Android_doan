@@ -13,13 +13,10 @@ import com.example.banve.R;
 import com.example.banve.models.HoaDon;
 import com.example.banve.utils.DinhDangTien;
 import com.example.banve.utils.HienThi;
+import com.example.banve.utils.TienIch;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class HoaDonAdapter extends RecyclerView.Adapter<HoaDonAdapter.HoaDonViewHolder> {
     public interface OnHoaDonClickListener {
@@ -52,7 +49,7 @@ public class HoaDonAdapter extends RecyclerView.Adapter<HoaDonAdapter.HoaDonView
     public void onBindViewHolder(@NonNull HoaDonViewHolder holder, int position) {
         HoaDon hoaDon = danhSachHoaDon.get(position);
         holder.lblMaHoaDon.setText("Mã hóa đơn: " + hoaDon.getMaHoaDon());
-        holder.lblNgayLap.setText("Ngày lập: " + dinhDangNgayGio(hoaDon.getNgayLap()));
+        holder.lblNgayLap.setText("Ngày lập: " + TienIch.dinhDangNgayGio(hoaDon.getNgayLap()));
         holder.lblTongTien.setText("Tổng tiền: " + DinhDangTien.dinhDang(hoaDon.getTongTien()));
         holder.lblTrangThai.setText("Trạng thái: " + HienThi.trangThai(hoaDon.getTrangThai()));
         holder.btnXemChiTiet.setOnClickListener(v -> listener.onXemChiTiet(hoaDon));
@@ -61,35 +58,6 @@ public class HoaDonAdapter extends RecyclerView.Adapter<HoaDonAdapter.HoaDonView
     @Override
     public int getItemCount() {
         return danhSachHoaDon.size();
-    }
-
-    private String dinhDangNgayGio(String ngayGio) {
-        if (ngayGio == null || ngayGio.trim().isEmpty()) {
-            return "";
-        }
-
-        String[] dinhDangNguon = {
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
-                "yyyy-MM-dd'T'HH:mm:ssXXX",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSSX",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSX",
-                "yyyy-MM-dd'T'HH:mm:ssX",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
-                "yyyy-MM-dd'T'HH:mm:ss.SSS",
-                "yyyy-MM-dd'T'HH:mm:ss",
-                "yyyy-MM-dd HH:mm:ss"
-        };
-
-        for (String dinhDang : dinhDangNguon) {
-            try {
-                Date ngay = new SimpleDateFormat(dinhDang, Locale.getDefault()).parse(ngayGio);
-                return new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(ngay);
-            } catch (ParseException ignored) {
-            }
-        }
-
-        return ngayGio;
     }
 
     static class HoaDonViewHolder extends RecyclerView.ViewHolder {

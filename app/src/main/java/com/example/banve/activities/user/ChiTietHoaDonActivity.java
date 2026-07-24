@@ -35,7 +35,6 @@ import com.example.banve.utils.TienIch;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -187,7 +186,7 @@ public class ChiTietHoaDonActivity extends AppCompatActivity {
                 hoaDonHienTai.getTongTien() - hoaDonHienTai.getTienGiam()
         );
         lblMaHoaDon.setText("Mã hóa đơn: #" + hoaDonHienTai.getMaHoaDon());
-        lblNgayLap.setText("Ngày lập: " + dinhDangNgayGio(hoaDonHienTai.getNgayLap()));
+        lblNgayLap.setText("Ngày lập: " + TienIch.dinhDangNgayGio(hoaDonHienTai.getNgayLap()));
         lblTrangThai.setText("Trạng thái: " + HienThi.trangThai(hoaDonHienTai.getTrangThai()));
         lblHinhThuc.setText(
                 "Hình thức thanh toán: "
@@ -439,39 +438,6 @@ public class ChiTietHoaDonActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("Đồng ý", (dialog, which) -> finish())
                 .show();
-    }
-
-    private String dinhDangNgayGio(String ngayGio) {
-        if (ngayGio == null || ngayGio.trim().isEmpty()) {
-            return "";
-        }
-        String[] dinhDangNguon = {
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
-                "yyyy-MM-dd'T'HH:mm:ssXXX",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSSX",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSX",
-                "yyyy-MM-dd'T'HH:mm:ssX",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
-                "yyyy-MM-dd'T'HH:mm:ss.SSS",
-                "yyyy-MM-dd'T'HH:mm:ss",
-                "yyyy-MM-dd HH:mm:ss",
-                "yyyy-MM-dd"
-        };
-
-        for (String dinhDang : dinhDangNguon) {
-            try {
-                Date ngay = new SimpleDateFormat(dinhDang, Locale.getDefault()).parse(ngayGio);
-                if (ngay != null) {
-                    return new SimpleDateFormat(
-                            "dd/MM/yyyy HH:mm",
-                            Locale.getDefault()
-                    ).format(ngay);
-                }
-            } catch (ParseException ignored) {
-            }
-        }
-        return ngayGio;
     }
 
     private boolean conCoTheCapNhatGiaoDien() {

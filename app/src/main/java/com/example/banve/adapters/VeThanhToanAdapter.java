@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.banve.R;
 import com.example.banve.models.MucGioHang;
 import com.example.banve.utils.DinhDangTien;
+import com.example.banve.utils.TienIch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,10 @@ public class VeThanhToanAdapter extends RecyclerView.Adapter<VeThanhToanAdapter.
         MucGioHang muc = danhSachMuc.get(position);
         holder.imgAnhVe.setVisibility(View.GONE);
         holder.lblTenVe.setText(muc.getVe().getTenVe());
-        holder.lblNgaySuDung.setText("Ngày sử dụng: " + muc.getChiTietGioHang().getNgaySuDung());
+        holder.lblNgaySuDung.setText(
+                "Ngày sử dụng: "
+                        + TienIch.dinhDangNgay(muc.getChiTietGioHang().getNgaySuDung())
+        );
         holder.lblSoLuong.setText(
                 "NL: " + muc.getChiTietGioHang().getSoLuongNguoiLon()
                         + " | TE: " + muc.getChiTietGioHang().getSoLuongTreEm()
@@ -77,4 +81,3 @@ public class VeThanhToanAdapter extends RecyclerView.Adapter<VeThanhToanAdapter.
         }
     }
 }
-

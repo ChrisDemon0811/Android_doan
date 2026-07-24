@@ -76,7 +76,9 @@ public class ThongTinNguoiDungActivity extends AppCompatActivity {
         lblEmail.setText("Email: " + giaTri(nguoiDung.getEmail()));
         lblSoDienThoai.setText("Số điện thoại: " + giaTri(nguoiDung.getSoDienThoai()));
         lblVaiTro.setText("Vai trò: " + HienThi.vaiTro(nguoiDung.getVaiTro()));
-        lblNgayDangKy.setText("Ngày đăng ký: " + giaTri(nguoiDung.getNgayDangKy()));
+        lblNgayDangKy.setText(
+                "Ngày đăng ký: " + TienIch.dinhDangNgay(nguoiDung.getNgayDangKy())
+        );
         lblTrangThai.setText("Trạng thái: " + HienThi.trangThai(nguoiDung.getTrangThai()));
     }
 
