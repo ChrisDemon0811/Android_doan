@@ -28,12 +28,14 @@
                 style="@style/App.Button.OnGradient"
                 android:layout_width="@dimen/btn_height_sm"
                 android:layout_height="@dimen/btn_height_sm"
+                android:background="@drawable/bg_nut_menu_admin"
                 android:drawableTop="@drawable/ic_bv_menu"
                 android:drawableTint="@color/white"
                 android:gravity="center"
                 android:minWidth="0dp"
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp"
+                android:stateListAnimator="@null"
                 android:text=""
                 android:textSize="@dimen/text_heading" />
 
